@@ -1,0 +1,73 @@
+{
+  "name": "bridgeton_eth_through_db",
+  "version": "1.0.1",
+  "description": "Interaction patients with doctor throught DB MySQL and Smart contract Ethereum and TON. Contracts include only get access doc and annual access. DB include all other. Main goal create bridge ETH - TON",
+  "main": "server.js",
+  "nodemonConfig": {
+    "ext": "js,json",
+    "ignore": [
+      "*.ABIandAddress.js",
+      "public/js/*",
+      "*.accounts.json",
+      "routers/*.json",
+      "contract/*.json"
+    ],
+    "delay": "4"
+  },
+  "scripts": {
+    "start": "nodemon ./server.js",
+    "dev": "node server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/StrongerProgrammer7/bridge_ton_eth_through_db.git"
+  },
+  "keywords": [
+    "nodejs",
+    "js",
+    "html",
+    "css",
+    "ethereum",
+    "web3",
+    "mysql",
+    "ton",
+    "bridge"
+  ],
+  "author": "Abduykov Z.M.",
+  "license": "SEE LICENSE IN LICENSE",
+  "bugs": {
+    "url": "https://github.com/StrongerProgrammer7/bridge_ton_eth_through_db/issues"
+  },
+  "homepage": "https://github.com/StrongerProgrammer7/bridge_ton_eth_through_db#readme",
+  "dependencies": {
+    "@openzeppelin/contracts": "^4.8.2",
+    "bcrypt": "^5.1.0",
+    "bcryptjs": "^2.4.3",
+    "body-parser": "^1.20.2",
+    "browserify": "^17.0.0",
+    "cookie-parser": "^1.4.6",
+    "cors": "^2.8.5",
+    "dotenv": "^16.0.3",
+    "ejs": "^3.1.9",
+    "ejs-mate": "^4.0.0",
+    "express": "^4.18.2",
+    "express-fileupload": "^1.4.0",
+    "express-session": "^1.17.3",
+    "express-validator": "^7.0.1",
+    "file-system": "^2.2.2",
+    "ganache": "^7.7.7",
+    "ipfs-core": "^0.18.0",
+    "ipfs-http-client": "^50.1.2",
+    "jsonwebtoken": "^9.0.0",
+    "node-abort-controller": "^3.1.1",
+    "uuid": "^9.0.0",
+    "web3": "^1.9.0",
+    "web3-eth": "^1.9.0"
+  },
+  "devDependencies": {
+    "@ganache/console.log": "^0.3.0",
+    "mysql2": "^3.3.1",
+    "nodemon": "^2.0.22",
+    "sequelize": "^6.30.0"
+  }
+}
