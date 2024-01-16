@@ -1,9 +1,10 @@
-const mysql = require('../../../routers/connectionMySQL');
 const ApiError = require('../../../error/ApiError');
+const query_db = require('../query_db');
+const { getAllCategoriesDoctors } = require('../GET_queries');
 
-const select_all_categories_doctors = async (req,res,next) =>
+const get_all_categories_doctors = async (req,res,next) =>
 {
-     await mysql.promise().query(`SELECT * FROM Category_doctor`)
+    query_db(getAllCategoriesDoctors)
     .then(async (result,error) =>
     {
         if(error)
@@ -12,8 +13,6 @@ const select_all_categories_doctors = async (req,res,next) =>
             return next(ApiError.internal('Error database bad query: select_all_categories_doctors'));
         }
         return res.status(200).json({status:true, data:result[0]});
-            
-        
     })
     .catch((err) => 
     {
@@ -23,4 +22,4 @@ const select_all_categories_doctors = async (req,res,next) =>
     
 }
 
-module.exports = select_all_categories_doctors;
+module.exports = get_all_categories_doctors;

@@ -1,10 +1,10 @@
-const { json } = require('body-parser');
-const mysql = require('../../../routers/connectionMySQL');
 const ApiError = require('../../../error/ApiError');
+const query_db = require("../query_db");
+const { getAllCities } = require('../GET_queries');
 
-const selectCities = async (req,res,next) =>
+const get_all_cities = async (req,res,next) =>
 {
-    await mysql.promise().query(`SELECT id,region, city FROM City`)
+    query_db(getAllCities)
     .then((result,error) =>
     {
         if(error)
@@ -22,4 +22,4 @@ const selectCities = async (req,res,next) =>
     
 }
 
-module.exports = selectCities;
+module.exports = get_all_cities;

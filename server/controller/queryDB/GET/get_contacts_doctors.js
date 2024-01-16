@@ -1,10 +1,10 @@
-const { json } = require('body-parser');
-const mysql = require('../../../routers/connectionMySQL');
 const ApiError = require('../../../error/ApiError');
+const query_db = require('../query_db');
+const { getAllContactsOfDoctors } = require('../GET_queries');
 
 const select_contacts_doctors = async (req,res,next) =>
 {
-    await mysql.promise().query(`SELECT * FROM Contacts_doc`)
+    query_db(getAllContactsOfDoctors)
     .then((result,error) =>
     {
         if(error)

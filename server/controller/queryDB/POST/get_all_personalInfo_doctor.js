@@ -1,20 +1,21 @@
-const { json } = require('body-parser');
 const ApiError = require('../../../error/ApiError');
-const mysql = require('../../../routers/connectionMySQL');
+const query_db = require('../query_db');
+const { getAllPersonalInfoAboutDoctor } = require('../POST_queries');
 
-
-const select_all_info_aboutDoctor = async (req,res,next) =>
+const get_all_info_aboutDoctor = async (req,res,next) =>
 {
     const
     {
         meta
     }= req.body;
-    await mysql.promise().query(`SELECT id,contacts_id,hospital_id,category,profession,surname,name,lastname,phone,mail FROM Doctor
-    WHERE Doctor.account_wallet = ?`,[meta])
+    query_db(getAllPersonalInfoAboutDoctor,[meta])
     .then((result,error) =>
     {
         if(error)
+        {
+            console.log(error);
             return next(ApiError.internal('Error database bad query: select_all_info_aboutDoctor'));
+        }
         
         return res.status(200).json({status:true, data:result[0]});
     })
@@ -26,4 +27,4 @@ const select_all_info_aboutDoctor = async (req,res,next) =>
     
 }
 
-module.exports = select_all_info_aboutDoctor;
+module.exports = get_all_info_aboutDoctor;

@@ -1,5 +1,7 @@
-const mysql = require('../../../routers/connectionMySQL');
 const ApiError = require('../../../error/ApiError');
+const { getIDDoctorByAccountWallet,getNewRecordsIll } = require('../POST_queries');
+const { getData } = require('../GET_queries');
+const query_db = require('../query_db');
 
 const isExistsIll = (ill) =>
 {
@@ -8,7 +10,7 @@ const isExistsIll = (ill) =>
 
 const insertDatabase = async (query,params,messageError,next) =>
 {
-    return await mysql.promise().query(query,[...params])
+    return query_db(query,[...params])
     .catch(error =>
     {
         if(error)
@@ -32,10 +34,12 @@ const insert_diagnosis = async (req,res,next) =>
         id_patient,
         
     } = req.body;
+    if(!name_ill || !meta)
+        return next(ApiError.badRequest('Error: bad get data: mata or name ill'));
     if(date_cured === "")
         date_cured = null;
 
-    await mysql.promise().query(`SELECT id FROM Doctor Where account_wallet = ?;Select name_ill FROM Name_ills WHERE name_ill = ?`,[meta,name_ill])
+    query_db(getIDDoctorByAccountWallet + `;` + getData('name_ill','Name_ills','name_ill = ?'),[meta,name_ill])
     .then(async (result,err) =>
     {
        
@@ -68,14 +72,7 @@ const insert_diagnosis = async (req,res,next) =>
             "Error database bad query:Get error with insert records ",
             next);
 
-        await mysql.promise().query(`SELECT Records.id,Patient.surname as surname,Patient.id as id_patient,Patient.account_wallet as meta,Patient.list_doctors_have_access as list_doc ,Diseased.name_ill, Diseased.treatment, Diseased.classification,Records.date_ill,Records.date_cured,Records.status FROM Records 
-        INNER JOIN 
-        Doctor ON Doctor.id = Records.id_doctor
-        INNER JOIN 
-        Diseased ON Diseased.id = Records.id_ill
-        INNER JOIN
-        Patient ON Patient.id = Records.id_patient
-        Where Records.id = ?`,[records[0][1][0].id])
+        query_db(getNewRecordsIll,[records[0][1][0].id])
         .then((result,error) =>
         {
             console.log(result[0]);

@@ -1,9 +1,10 @@
-const mysql = require('../../../routers/connectionMySQL');
 const ApiError = require('../../../error/ApiError');
+const query_db = require('../query_db');
+const { getAllProfession } = require('../GET_queries');
 
-const select_all_profession_doctors = async (req,res,next) =>
+const get_all_profession_doctors = async (req,res,next) =>
 {
-     await mysql.promise().query(`SELECT * FROM Profession`)
+    query_db(getAllProfession)
     .then(async (result,error) =>
     {
         if(error)
@@ -23,4 +24,4 @@ const select_all_profession_doctors = async (req,res,next) =>
     
 }
 
-module.exports = select_all_profession_doctors;
+module.exports = get_all_profession_doctors;

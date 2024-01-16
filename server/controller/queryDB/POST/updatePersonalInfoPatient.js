@@ -1,4 +1,4 @@
-const mysql = require('../../../routers/connectionMySQL');
+const query_db = require('../query_db');
 const ApiError = require('../../../error/ApiError');
 
 const update_pesonalInfo_patient = async (req,res,next) =>
@@ -17,19 +17,19 @@ const update_pesonalInfo_patient = async (req,res,next) =>
         datebirthd,
         meta
     } = req.body;
-     await mysql.promise().query(`UPDATE Patient
-     Set city_id = ?,
-     surname = ?,
-     name = ?,
-     lastname = ?,
-     phone = ?,
-     mail = ?,
-     isPartInformation_hidden = ?,
-     address_of_residence = ?,
-     insurance_policy = ?,
-     datebirthd = ?
-     Where account_wallet = ?
-     `,[city_id,surname,name,lastname,phone,mail,isPartInformation_hidden,address_of_residence,insurance_policy,datebirthd,meta])
+    query_db(`UPDATE Patient
+    Set city_id = ?,
+    surname = ?,
+    name = ?,
+    lastname = ?,
+    phone = ?,
+    mail = ?,
+    isPartInformation_hidden = ?,
+    address_of_residence = ?,
+    insurance_policy = ?,
+    datebirthd = ?
+    Where account_wallet = ?
+    `,[city_id,surname,name,lastname,phone,mail,isPartInformation_hidden,address_of_residence,insurance_policy,datebirthd,meta])
     .then(async (result,err) =>
     {
         if(err)

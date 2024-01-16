@@ -1,6 +1,6 @@
 const ApiError = require('../../../error/ApiError');
-const mysql = require('../../../routers/connectionMySQL');
-
+const query_db = require('../query_db');
+const { getDataAboutPerson } = require('../POST_queries');
 
 const isExistsPatient_Doctor = async (req,res,next) =>
 {
@@ -10,11 +10,14 @@ const isExistsPatient_Doctor = async (req,res,next) =>
     } = req.body;
     if(!meta)
         return next(ApiError.badRequest('Not correct address wallet'));
-    await mysql.promise().query(`Select id,name_wallet,name FROM Patient WHERE account_wallet = ?; Select id,name_wallet,name FROM Doctor WHERE account_wallet = ? `,[meta,meta])
+    query_db(getDataAboutPerson('id,name_wallet,name','Patient') + ';' + getDataAboutPerson('id,name_wallet,name','Doctor'),[meta,meta])
     .then(async (results,err) =>
     {
         if(err)
+        {
+            console.log(err);
             return next(ApiError.internal('Internal error with get users!'));
+        }
             
         let patient = false;
         let name_walletPatient = "";

@@ -1,18 +1,22 @@
-const mysql = require('../../../routers/connectionMySQL');
-const ApiError = require('../../../error/ApiError');
 
-const select_all_doctors = async (req,res,next) =>
+const ApiError = require('../../../error/ApiError');
+const query_db = require('../query_db');
+const { getAllDoctors } = require('../GET_queries');
+
+const get_all_doctors = async (req,res,next) =>
 {
-     await mysql.promise().query(`Select Doctor.id,surname,name,lastname,profession, mail,City.city as city,Doctor.account_wallet  FROM Doctor INNER JOIN (Hospital INNER JOIN City ON City.id = Hospital.city_id) ON Hospital.id= Doctor.hospital_id`)
+    query_db(getAllDoctors)
     .then((result,err) =>
     {
         if(err)
+        {
+            console.log(err);
             return next(ApiError.internal('Error database bad query: select_all_doctors'));
+        }
         
         if(result[0].length===0)
-        {
             return res.status(201).json({status:false, message:"List empty!"})
-        }else
+        else
         {
             
             let all_doctors = [];
@@ -44,4 +48,4 @@ const select_all_doctors = async (req,res,next) =>
     
 }
 
-module.exports = select_all_doctors;
+module.exports = get_all_doctors;

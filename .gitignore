@@ -1,0 +1,6 @@
+node_modules
+node_modules
+routers/accounts.json
+server/public/*
+ContractOpenZepplin.zip
+.vscode

@@ -1,17 +1,16 @@
-const { json } = require('body-parser');
 const ApiError = require('../../../error/ApiError');
-const mysql = require('../../../routers/connectionMySQL');
+const query_db = require('../query_db');
+const { getCityOfPatient } = require('../POST_queries');
 
-
-const selectCity_patient = async (req,res,next) =>
+const get_city_of_patient = async (req,res,next) =>
 {
     const
     {
         meta
     }= req.body;
-    await mysql.promise().query(`SELECT city FROM Patient
-    INNER JOIN City ON City.id = Patient.city_id
-    WHERE Patient.account_wallet = ?`,[meta])
+    if(!meta)
+        return next(ApiError.badRequest('Error: bad data: meta'));
+    query_db(getCityOfPatient,[meta])
     .then((result,error) =>
     {
         if(error)
@@ -29,4 +28,4 @@ const selectCity_patient = async (req,res,next) =>
     
 }
 
-module.exports = selectCity_patient;
+module.exports = get_city_of_patient;

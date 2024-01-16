@@ -1,7 +1,8 @@
 const ApiError = require('../../../error/ApiError');
-const mysql = require('../../../routers/connectionMySQL');
+const query_db = require('../query_db');
+const {getIDPatientByAccountWallet,getActualIllsOfPatient } = require('../POST_queries');
 
-const select_all_actual_ills_patient = async (req,res,next) =>
+const get_all_actual_ills_of_patient = async (req,res,next) =>
 {
     const 
     {
@@ -9,7 +10,7 @@ const select_all_actual_ills_patient = async (req,res,next) =>
     } = req.body;
 
     if(!meta) return next(ApiError.badRequest(`Error: bad data meta: ${meta}`))
-    await mysql.promise().query(`SELECT id FROM Patient Where account_wallet = ?`,[meta])
+    query_db(getIDPatientByAccountWallet,[meta])
     .then(async (result,error) =>
     {
         if(error)
@@ -17,38 +18,31 @@ const select_all_actual_ills_patient = async (req,res,next) =>
         if(result[0].length ===0)
             return res.status(201).json({message:"Patient/Doctor don't exists",status:"Fail"});
 
-        await mysql.promise().query(`SELECT Records.id,Diseased.name_ill, Diseased.treatment, Diseased.classification,Records.date_ill,Records.date_cured,Records.status FROM Records 
-        INNER JOIN 
-        Doctor ON Doctor.id = Records.id_doctor
-        INNER JOIN 
-        Diseased ON Diseased.id = Records.id_ill
-        Where Records.status LIKE 'ill' AND Records.id_patient = ? `,[result[0][0].id])
+        query_db(getActualIllsOfPatient,[result[0][0].id])
         .then(async (result,err) =>
         {
             if(err)
-                return next(ApiError.internal('Error database bad query: select_all_actual_ills_patient'));
+            {
+                console.log(err);
+                return next(ApiError.internal('Error database bad query: get_all_actual_ills_of_patient'));
+            }
                 
             if(result[0].length===0)
-            {
                 return res.status(201).json({status:false, message:"List empty!"})
-            }else
-            {
+            else
                 return res.status(200).json({data:result[0],message:"Success"});            
-            }
-            
         })
         .catch((err) => 
         {
             console.log(err);
-            return next(ApiError.internal('Error: getIll'));
+            return next(ApiError.internal('Error: get_all_actual_ills_of_patient'));
         });
     }).catch((err)=>
     {
         console.log(err);
-        return next(ApiError.internal('Error: getIll'));
+        return next(ApiError.internal('Error: Problem with server'));
     });
-         
 }
 
 
-module.exports = select_all_actual_ills_patient;
+module.exports = get_all_actual_ills_of_patient;

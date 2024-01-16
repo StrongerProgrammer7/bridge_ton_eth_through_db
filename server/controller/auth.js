@@ -6,19 +6,19 @@ const register = require("../model/register");
 const login = require("./login");
 /*Query DB---------------------------*/
 const isExistsPatient_Doctor = require("./queryDB/POST/isExistsPatient_Doctor");
-const selectCities = require("./queryDB/GET/selectCities");
+const get_all_cities = require("./queryDB/GET/get_all_cities");
 const get_contacts_doctors = require('./queryDB/GET/get_contacts_doctors');
 const get_hospitals = require('./queryDB/GET/get_hospitals');
 const get_all_profession_doctors = require('./queryDB/GET/get_all_profession_doctors');
 const get_all_categories_doctors = require('./queryDB/GET/get_categories_doctor');
 const get_all_doctors = require('./queryDB/GET/get_all_doctors');
 const get_all_patients = require('./queryDB/GET/get_all_patient');
-const get_all_info_about_doctor = require('./queryDB/POST/get_all_info_about_doctor');
+const get_all_details_info_about_doctor = require('./queryDB/POST/get_all_details_info_about_doctor');
 const get_all_ill_s_Patient = require('./queryDB/POST/get_all_ill_s_Patient');
 const get_all_actuaIllPatient = require('./queryDB/POST/get_all_actual_ill');
 const get_list_doctors_haveAccess = require('./queryDB/POST/get_list_doctors_haveAccess');
 const update_list_doctors = require('./queryDB/POST/update_list_doctors');
-const getCity = require('./queryDB/POST/getCity');
+const getCity = require('./queryDB/POST/post_get_city');
 const get_all_personalInfo_patient = require('./queryDB/POST/get_all_personalInfo_patient')
 const get_all_personalInfo_doctor = require('./queryDB/POST/get_all_personalInfo_doctor');
 const update_pesonalInfo_patient = require('./queryDB/POST/updatePersonalInfoPatient');
@@ -35,7 +35,7 @@ router.post("/login",[
     check('pass',"Password should be length 6 or more and less 255").isLength({min:6,max:255})
 ],login);
 //-------DB
-router.post("/get_all_info_about_doctor",get_all_info_about_doctor);
+router.post("/get_all_info_about_doctor",get_all_details_info_about_doctor);
 router.post("/isExistsPatient_Doctor",isExistsPatient_Doctor);
 router.post("/get_all_ill_s_patient",get_all_ill_s_Patient);
 router.post('/get_list_doctors_haveAccess',get_list_doctors_haveAccess);
@@ -50,7 +50,7 @@ router.post('/get_all_actuaIllPatient',get_all_actuaIllPatient);
 /*----------------GET------------------------*/
 
 //-------DB
-router.get("/get_cities",selectCities);
+router.get("/get_cities",get_all_cities);
 router.get("/get_all_patients",get_all_patients);
 router.get("/get_all_doctors",get_all_doctors);
 router.get("/get_contacts_doctors",get_contacts_doctors);

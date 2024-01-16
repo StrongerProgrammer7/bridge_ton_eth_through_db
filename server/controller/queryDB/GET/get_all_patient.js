@@ -1,9 +1,9 @@
-const mysql = require('../../../routers/connectionMySQL');
 const ApiError = require('../../../error/ApiError');
-
-const select_all_patients = async (req,res,next) =>
+const query_db = require('../query_db');
+const { getAllPatient } = require('../GET_queries');
+const get_all_patients = async (req,res,next) =>
 {
-     await mysql.promise().query(`Select Patient.id,surname,name,lastname, City.city as city, mail, account_wallet,list_doctors_have_access as list_doc FROM Patient INNER JOIN City ON City.id = Patient.city_id`)
+    query_db(getAllPatient)
     .then(async (result,err) =>
     {
         if(err)
@@ -46,4 +46,4 @@ const select_all_patients = async (req,res,next) =>
     
 }
 
-module.exports = select_all_patients;
+module.exports = get_all_patients;
