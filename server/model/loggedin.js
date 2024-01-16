@@ -1,7 +1,8 @@
 // @ts-nocheck
 const jwt = require("jsonwebtoken");
 const { default: ApiError } = require("../error/ApiError");
-const mysql = require('../routers/connectionMySQL');
+const query_db = require('../controller/queryDB/query_db');
+const { getData } =require('../controller/queryDB/GET_queries');
 const dotenv = require('dotenv').config();
 
 const loggedIn = (req,res,next) =>
@@ -17,7 +18,7 @@ const loggedIn = (req,res,next) =>
         console.log(decoded.id)
         if(!decoded.id)
             return next(ApiError.badRequest('Undefined ID (decode.id)'));
-        mysql.query('SELECT * FROM Patient WHERE id = ?',[decoded.id],(err,result) =>
+        query_db(getData('*','Patient','id = ?'),[decoded.id],(err,result) =>
         {
             if(err)
                 return next(); // next() без аргументов позволяет подобрать любой другой , если нет нужного

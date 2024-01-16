@@ -1,7 +1,7 @@
 // @ts-nocheck
-const { json } = require('body-parser');
 const jwt = require("jsonwebtoken");
-const mysql = require('../routers/connectionMySQL');
+const query_db = require('../controller/queryDB/query_db');
+const { getDataAboutPerson } = require('../controller/queryDB/POST_queries');
 const bcrypt = require("bcrypt");
 const { default: ApiError } = require('../error/ApiError');
 
@@ -20,17 +20,17 @@ const login = async (req,res,next) =>
     {
         if(isDoctor===false)
         {
-            signIn(`Select * FROM Patient WHERE account_wallet  = ?`,res,meta,pass,next);
+            signIn(getDataAboutPerson('*','Patient'),res,meta,pass,next);
         }else
         {
-            signIn(`Select * FROM Doctor WHERE account_wallet  = ?`,res,meta,pass,next);
+            signIn(getDataAboutPerson('*','Doctor') ,res,meta,pass,next);
         }
     }
 }
 
 async function signIn(query_check,res,meta,pass,next)
 {
-    await mysql.promise().query(query_check,[meta])
+    query_db(query_check,[meta])
     .then((result,error) =>
     {
         if(error)

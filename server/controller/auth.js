@@ -3,7 +3,7 @@ const router = new Router();
 const { check } = require('express-validator');
 const register = require("../model/register");
 // const upload = require("./upload");
-const login = require("./login");
+const login = require("../model/login");
 /*Query DB---------------------------*/
 const isExistsPatient_Doctor = require("./queryDB/POST/isExistsPatient_Doctor");
 const get_all_cities = require("./queryDB/GET/get_all_cities");

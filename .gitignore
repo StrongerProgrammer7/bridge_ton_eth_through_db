@@ -4,3 +4,4 @@ routers/accounts.json
 server/public/*
 ContractOpenZepplin.zip
 .vscode
+server/contract/ABIandAddress.json
