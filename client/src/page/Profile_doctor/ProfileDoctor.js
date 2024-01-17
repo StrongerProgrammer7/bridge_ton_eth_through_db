@@ -1,5 +1,5 @@
 // @ts-nocheck
-import React,{useContext,useState,useEffect,useRef, useLayoutEffect} from "react";
+import React,{useContext,useState,useEffect,useRef} from "react";
 import { Context } from "../../App";
 import css from './profile_doctor.module.css';
 import Accordion from 'react-bootstrap/Accordion';

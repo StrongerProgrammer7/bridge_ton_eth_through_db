@@ -5,10 +5,9 @@ import AppRouter from "./components/AppRouter";
 import Navbar from "./components/Navbar";
 import Footer from "./components/Footer/Footer";
 import UserStore from './store/UserStore';
-
+import { getLocalStorageItem } from './utils/helper';
 
 export const Context = createContext(null);
-export const ContextAuthRegistration = createContext(null);
 
 function App() 
 {
@@ -26,16 +25,10 @@ function App()
   {
     try 
     {
-      
-      if(window.localStorage.getItem("registration_db"))
-        setIsRegisteredDB(true);
-      if(window.localStorage.getItem("registration_contract"))
-        setIsRegisteredContract(true);
-      if(window.localStorage.getItem("registrationSuccess"))
-        setIsRegistered(true);
-      if(window.localStorage.getItem("isAuth"))
-        setIsAuth(true);
-      user.setIsAuth(isAuth);
+      setIsRegisteredDB((getLocalStorageItem('registration_db')&& true) || false);
+      setIsRegisteredContract((getLocalStorageItem('registration_contract')&& true) || false);
+      setIsRegistered((getLocalStorageItem('registrationSuccess') && true) || false);
+      setIsAuth((getLocalStorageItem('isAuth') && true) || false);
       setLoading(false);
     } catch (error) 
     {
@@ -46,7 +39,7 @@ function App()
   },[])
 
   return (
-    <ContextAuthRegistration.Provider value={
+    <Context.Provider value={
       {
         isAuth,
         setIsAuth,
@@ -60,26 +53,16 @@ function App()
         isLogIn,
         setLogIn,
         name,
-        setName
+        setName,
+        user
       }
     }>
-    <Context.Provider value={
-          {
-            user
-            
-          }
-        }>
-          <BrowserRouter>
-            <Navbar></Navbar>
-           <AppRouter></AppRouter>
-            <Footer></Footer>
-          </BrowserRouter>
-        </Context.Provider>
-
-    </ContextAuthRegistration.Provider>
-    
-    
-    
+      <BrowserRouter>
+        <Navbar></Navbar>
+        <AppRouter></AppRouter>
+        <Footer></Footer>
+      </BrowserRouter>
+    </Context.Provider>
   );
 }
 

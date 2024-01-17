@@ -1,6 +1,6 @@
 // @ts-nocheck
 const jwt = require("jsonwebtoken");
-const query_db = require('../controller/queryDB/query_db');
+const query_db = require('./queryDB/query_db');
 const { getDataAboutPerson } = require('./queryDB/POST_queries');
 const bcrypt = require("bcrypt");
 const { default: ApiError } = require('../error/ApiError');

@@ -2,58 +2,40 @@
 
 import { Outlet } from "react-router-dom";
 import css from "./navbar.module.css";
-import React,{useContext}  from 'react'
+import React,{memo, useContext,useState}  from 'react'
 import Container from 'react-bootstrap/Container';
 import Nav from 'react-bootstrap/Nav';
 import Navbar from 'react-bootstrap/Navbar';
-import Button from 'react-bootstrap/Button';
 
 import SwitchCircle from "../checkboxes/SwitchCircle";
-import { REGISTRATION_ROUTE,MAIN_ROUTE, PROFILE_ROUTE } from "../../../utils/consts";
-import MyPopup from "../Popups/signIn/MyPopup";
-import { ContextAuthRegistration } from "../../../App";
+import { REGISTRATION_ROUTE,MAIN_ROUTE, PROFILEDOCTOR_ROUTER, PROFILE_ROUTE } from "../../../utils/consts";
+import { Context } from "../../../App";
 import Spinner from 'react-bootstrap/Spinner';
 import { useEffect } from "react";
 
+
 //rfac
 
-function logout(user,setIsAuth)
-{
-    try 
-    {
-        user.setIsAuth(false);
-        setIsAuth(false);
-        if(window.localStorage.getItem("isAuth"))
-            window.localStorage.removeItem("isAuth");
-        setTimeout(()=>
-        {
-            window.open("/","_self");
-        },1000);
-    } catch (error) 
-    {
-        console.log("Error with logout");
-        console.error(error);    
-    }
-}
-const MyNavbar = ({title,title_mainPage,location,user,isRegistred,...props}) =>
-{
-    const { isLoading,setIsAuth,setLogIn,isLogIn } = useContext(ContextAuthRegistration);
 
+const MyNavbar = ({title,title_mainPage,location,...props}) =>
+{
+    const { isRegistred,isLoading,isAuth,setIsAuth,isLogIn,user } = useContext(Context);
+
+    
     useEffect(()=>
     {
         if(isLogIn)
-        {
             setIsAuth(true);
-            user.setIsAuth(true);
-        }
-    },[])
+    },[isLogIn])
+
+    
     if(isLoading)
     {
         return(
             <Spinner animation="border" role="status">
-              <span className="visually-hidden">Loading...</span>
+                <span className="visually-hidden">Loading...</span>
             </Spinner>
-          );
+        );
     }
     const curentPath = location.pathname;
 
@@ -65,34 +47,20 @@ const MyNavbar = ({title,title_mainPage,location,user,isRegistred,...props}) =>
                 <Navbar.Toggle aria-controls="basic-navbar-nav" />
                 <Navbar.Collapse id="basic-navbar-nav" >
                 <Nav className="justify-content-end align-items-center flex-grow-1 me-auto">
-                    {curentPath !== MAIN_ROUTE ? <Nav.Link href={MAIN_ROUTE} className={css.hoverLink}>{title_mainPage}</Nav.Link> : ''}
+                    {curentPath !== MAIN_ROUTE ? 
+                    <Nav.Link href={MAIN_ROUTE} className={css.hoverLink}>{title_mainPage}</Nav.Link> 
+                    : 
+                    isAuth === true ?
+                    <Nav.Link href={ user.user.isDoctor ? PROFILEDOCTOR_ROUTER : PROFILE_ROUTE} 
+                    className={css.hoverLink}>
+                        Профиль</Nav.Link> 
+                            : null
+                    }
                     { isRegistred === true ?    
-                        // user.isAuth && curentPath !== PROFILE_ROUTE ?  <Nav.Link href="/profile" className={css.hoverLink}>Профиль</Nav.Link>
-                        // :
-                        user.isAuth === true ?  
-                       <>
-                        <MyPopup 
-                        titleModal="Изменить данные"  
-                        titleButton="Личные данные" 
-                        isSignIn={false}>
-                        </MyPopup> 
-                          <Button className="me-2" variant="danger" onClick={e => 
-                            {
-                                logout(user,setIsAuth);
-                            }}>
-                              Выход
-                            </Button>
-                        </>
-                        : 
-                        <MyPopup
-                        titleModal="Вход в профиль"  
-                        titleButton="Войти" 
-                        isSignIn={true}
-                        isLogIn={isLogIn}
-                        setLogIn={setLogIn}>
-                        </MyPopup>
+                        props.children
                         :
-                        curentPath !== REGISTRATION_ROUTE ? <Nav.Link href="/registration" className={css.hoverLink}>Зарегистрироваться</Nav.Link> : ''
+                        curentPath !== REGISTRATION_ROUTE ? 
+                        <Nav.Link href="/registration" className={css.hoverLink}>Зарегистрироваться</Nav.Link> : null
                         
                     }
                     <SwitchCircle></SwitchCircle>
@@ -101,12 +69,10 @@ const MyNavbar = ({title,title_mainPage,location,user,isRegistred,...props}) =>
                 </Navbar.Collapse>
             </Container>
         </Navbar>
-       
-        </>
-        
+        </> 
     )
 }
-export default MyNavbar;
+export default memo(MyNavbar);
 // const Navbar = (props) =>
 // {
 

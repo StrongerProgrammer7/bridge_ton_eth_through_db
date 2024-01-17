@@ -1,10 +1,9 @@
 // @ts-nocheck
-import { makeAutoObservable } from 'mobx';
+
 
 
 export default class UserStore
 {
-    _isAuth = false;
     
     _accountWallet = '';
     user = {
@@ -16,16 +15,7 @@ export default class UserStore
     };
     _contract = undefined;
     _list_doctors_access = [];
-    constructor()
-    {
-        makeAutoObservable(this);
-    }
-
-    setIsAuth(isAuth)
-    {
-        this._isAuth = isAuth;
-    }
-
+ 
 
     setAccountWallet(account)
     {
@@ -75,11 +65,6 @@ export default class UserStore
     setNewListDoctors(list)
     {
         this._list_doctors_access = list;
-    }
-
-    get isAuth()
-    {
-        return this._isAuth;
     }
 
     get accountWallet()

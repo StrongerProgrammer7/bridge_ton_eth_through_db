@@ -1,36 +1,106 @@
 // @ts-nocheck
-import React , { useContext,useState} from 'react';
+import React , { useState,useContext, useLayoutEffect} from 'react';
 import { useLocation } from "react-router-dom";
 import MyNavbar from './UI/Navbar/MyNavbar';
 import { Context } from "../App";
-import { observer } from 'mobx-react-lite';
-import { ContextAuthRegistration } from "../App";
-import { PROFILEDOCTOR_ROUTER, PROFILE_ROUTE } from '../utils/consts';
+
+import { Button } from 'react-bootstrap';
+import PopupPersonalData from './UI/Popups/personalData/PopupPersonalData';
+import PopupSignIn from './UI/Popups/signIn/PopupSignIn';
+import { removeLocalStorageItem } from '../utils/helper';
+import { PROFILE_ROUTE, PROFILEDOCTOR_ROUTER, MAIN_ROUTE } from '../utils/consts';
 import { useEffect } from 'react';
+const getTitle = (curentPath) =>
+{
+    if(curentPath === PROFILEDOCTOR_ROUTER)
+        return `Профиль: Врач `;
+    else if (curentPath === PROFILE_ROUTE)
+        return `Профиль: Пациент `;
+    return "Система взаимодействия";
+}
 
 
- const Navbar = observer(() => 
+function logout(setIsAuth)
+{
+    try 
+    {
+        setIsAuth(false);
+        removeLocalStorageItem('isAuth');
+       
+    } catch (error) 
+    {
+        console.log("Error with logout");
+        console.error(error);    
+    }
+}
+
+const Navbar = () => 
 {
     const location = useLocation();
-    const { user } = useContext(Context);
-    const { isRegistred,isAuth } = useContext(ContextAuthRegistration);
+    const { user,isAuth,isLogIn,setIsAuth , name} = useContext(Context);
+    const [titleNavbar,setTitleNavbar] = useState("Система взаимодействия");
 
-    user.setIsAuth(isAuth);
-    const curentPath = location.pathname;
-    let title = "Система взаимодействия";
-    if(curentPath === PROFILEDOCTOR_ROUTER)
-        title = `Профиль: Врач ${user.user.name}`;
-    if(curentPath === PROFILE_ROUTE)
-        title = `Профиль: Пациент ${user.user.name}`;
+    const [show, setShow] = useState(false);
+    const handleClose = () => setShow(false);
+    const handleShow = () => setShow(true); 
 
     useEffect(()=>
-    {   
+    {
+        const curentPath = location.pathname;
+        let title = getTitle(curentPath);
+        if(curentPath !== MAIN_ROUTE)
+            title = getTitle(curentPath) + user.user.name;
 
-    },[user.user.name])
+        setTitleNavbar(title);
+    },[name])
+ 
     return (
         <>
-        <MyNavbar title={title} title_mainPage="Главная" location={location} user={user} isRegistred={isRegistred}></MyNavbar>
+        <MyNavbar 
+        title={titleNavbar} 
+        title_mainPage="Главная" 
+        location={location} >
+                
+        <>
+            <Button 
+            variant="light" 
+            onClick={e => 
+            {
+                if(isLogIn)
+                    window.open("/profile","_self");
+                else
+                    handleShow();
+            }}
+            className="me-2"
+            >
+            {isAuth ? 'Личные данные': 'Войти'}
+            </Button>
+            {
+                isAuth  ?  
+                <>
+                <PopupPersonalData 
+                    show={show} 
+                    handleClose={handleClose}
+                    titleModal={"Изменить данные"}/>
+                  
+                    <Button className="me-2" variant="danger" onClick={e => 
+                        {
+                            logout(setIsAuth);
+                        }}>
+                        Выход
+                    </Button>
+                </>
+                : 
+                    <PopupSignIn 
+                    show={show} 
+                    handleClose={handleClose} 
+                    titleModal={"Вход в профиль"} 
+                    wallet={user.accountWallet}
+                    isDoctor={user.user.isDoctor}/>
+            }
+        </>
+        </MyNavbar>
         </>
     )
-})
+}
 export default Navbar;

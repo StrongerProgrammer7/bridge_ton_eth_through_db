@@ -1,6 +1,5 @@
 // @ts-nocheck
 const bcrypt = require("bcrypt");
-const ApiError = require('../error/ApiError');
 const { default: ApiError } = require("../error/ApiError");
 const query_db = require('./queryDB/query_db');
 const { getData } = require('./queryDB/GET_queries');

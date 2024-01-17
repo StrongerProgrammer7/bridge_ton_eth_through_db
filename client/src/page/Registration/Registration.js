@@ -1,8 +1,8 @@
 // @ts-nocheck
 import React, { useContext, useEffect, useState } from "react";
-import {Button, Form } from "react-bootstrap";
+import { Form } from "react-bootstrap";
 import { observer } from "mobx-react-lite";
-import { Context, ContextAuthRegistration } from "../../App";
+import {  Context } from "../../App";
 
 
 import { getData } from "../../http/getDataAPI";
@@ -16,7 +16,7 @@ const Registration = observer(() =>
 {
 
     const { user } = useContext(Context);
-    const registration_data = useContext(ContextAuthRegistration);
+    const registration_data = useContext(Context);
 
     const [options_cities,setOptionsCities] = useState([]);
     const [options_hospitals,setOptionsHospitals] = useState([]);
