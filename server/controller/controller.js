@@ -2,9 +2,8 @@ const Router = require('express');
 const router = new Router();
 const { check } = require('express-validator');
 const register = require("../model/register");
-// const upload = require("./upload");
 const login = require("../model/login");
-/*Query DB---------------------------*/
+/*--------------------------Query DB---------------------------*/
 const isExistsPatient_Doctor = require("../model/queryDB/POST/isExistsPatient_Doctor");
 const get_all_cities = require("../model/queryDB/GET/get_all_cities");
 const get_contacts_doctors = require('../model/queryDB/GET/get_contacts_doctors');
@@ -35,6 +34,7 @@ router.post("/login",[
     check('pass',"Password should be length 6 or more and less 255").isLength({min:6,max:255})
 ],login);
 //-------DB
+/*----------------POST------------------------*/
 router.post("/get_all_info_about_doctor",get_all_details_info_about_doctor);
 router.post("/isExistsPatient_Doctor",isExistsPatient_Doctor);
 router.post("/get_all_ill_s_patient",get_all_ill_s_Patient);
@@ -47,9 +47,8 @@ router.post('/update_pesonalInfo_patient',update_pesonalInfo_patient);
 router.post('/set_diagnosis',set_diagnosis);
 router.post('/update_diagnosis',update_diagnosis);
 router.post('/get_all_actuaIllPatient',get_all_actuaIllPatient);
-/*----------------GET------------------------*/
 
-//-------DB
+/*----------------GET------------------------*/
 router.get("/get_cities",get_all_cities);
 router.get("/get_all_patients",get_all_patients);
 router.get("/get_all_doctors",get_all_doctors);
@@ -60,5 +59,5 @@ router.get("/get_all_categories_doctors",get_all_categories_doctors);
 router.get("/get_all_classificationIlls",get_all_classificationIlls);
 router.get("/get_all_name_ills",get_all_name_ills);
 router.get('/getABIandAddress',getABIandAddress);
-//router.post("/profile",profile);
+
 module.exports = router;

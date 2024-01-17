@@ -10,7 +10,7 @@ const bodyParser = require('body-parser');
 const fileUpload = require('express-fileupload');
 const dotenv = require('dotenv').config();
 const pages = require('./routers/authRouters');
-const controller = require('./controller/auth');
+const controller = require('./controller/controller');
 const errorHandler = require('./middleware/ErrorHandlingMiddleware');
 
 const PORT = process.env.PORT || 3000;

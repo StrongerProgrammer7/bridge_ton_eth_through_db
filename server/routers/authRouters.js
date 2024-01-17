@@ -1,6 +1,5 @@
 const Router = require('express');
 const router = new Router();
-const loggedIn = require('../controller/loggedin');
 const fs = require('fs');
 const cookieParser = require('cookie-parser');
 const session = require('express-session');

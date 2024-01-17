@@ -1,8 +1,8 @@
 // @ts-nocheck
 const jwt = require("jsonwebtoken");
 const { default: ApiError } = require("../error/ApiError");
-const query_db = require('../controller/queryDB/query_db');
-const { getData } =require('../controller/queryDB/GET_queries');
+const query_db = require('./queryDB/query_db');
+const { getData } =require('./queryDB/GET_queries');
 const dotenv = require('dotenv').config();
 
 const loggedIn = (req,res,next) =>
