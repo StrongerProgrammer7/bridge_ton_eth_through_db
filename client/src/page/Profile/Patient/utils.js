@@ -1,34 +1,14 @@
 // @ts-nocheck
 import css from './profile.module.css';
 import { getListActualIllsPatients, getListAllDoctors, getListIllsPatients } from "./helper";
+import { isExistsData,createButton,isDoctorHaveAccess,getReadyDate } from '../total_utlls';
 import DataTables from "datatables.net-dt";
 require("datatables.net-select");
 require("datatables.net-responsive");
 require("datatables.net-searchpanes");
 
-function createButton(class_text,id,text)
-{
-    return `<button class='${class_text}' id='${id}'>${text}</button>`;
-}
 
 
-export const isExistsData = (data) =>
-{
-    return data.id_doctor !== null && data.id_doctor !== undefined && data.id_doctor !== "" && data.meta_doctor !== null && data.meta_doctor !== undefined && data.meta_doctor !== "";
-}
-function isExistsCuredPatient(date_cured)
-{
-    return date_cured!== undefined && date_cured!==null && date_cured!== "" ;
-}
-function isExistsIllPatient(date_ill)
-{
-    return  date_ill!==undefined && date_ill!==null && date_ill!== "";
-}
-
-function isDoctorHaveAccess(list,id)
-{
-    return list.indexOf(`${id}`);
-}
 
 export function createButtonForAccess(list_doctors_have_access,id)
 {
@@ -53,21 +33,19 @@ export function addActionForListDoctors(data,list_doctors_have_access='')
 
 function addActionForListIlls(listIlls_object)
 {
-    if(listIlls_object)
+    if(!listIlls_object) return undefined;
+    let data = listIlls_object;
+    for(let i =0;i<data.length;i++)
     {
-        let data = listIlls_object;
-        for(let i =0;i<data.length;i++)
-        {
-            data[i].num = i+1;
-            data[i].action = createButton("btn btn-info btn-sm","btn_moreInfo_ill","Больше информации");
-            if(isExistsCuredPatient(data[i].date_cured))
-                data[i].date_cured = `${ new Date(data[i].date_cured).toISOString().slice(0,10) + ' ' + new Date(data[i].date_cured).toISOString().slice(11,19)}`
-        
-            if(isExistsIllPatient(data[i].date_ill))
-                data[i].date_ill = `${  new Date(data[i].date_ill).toISOString().slice(0,10) + ' ' + new Date(data[i].date_ill).toISOString().slice(11,19)}`
-        }
-        return data;
+        data[i].num = i+1;
+        data[i].action = createButton("btn btn-info btn-sm","btn_moreInfo_ill","Больше информации");
+        if(isExistsData(data[i],'date_cured'))
+            data[i].date_cured = getReadyDate(data[i].date_cured)
+    
+        if(isExistsData(data[i],'date_ill'))
+            data[i].date_ill = getReadyDate(data[i].date_ill);
     }
+    return data;
     
 }
 
@@ -124,9 +102,9 @@ export async function getTableAllIlls(tableIllsRef,user)
     if(user.accountWallet === '')return;
     const data_ills = await getListIllsPatients(user.accountWallet);
 
-    console.log(data_ills.data.data);
+    //console.log(data_ills.data.data);
     const ills = addActionForListIlls(data_ills.data.data);
-    console.log(ills);
+    //console.log(ills);
     const dt_ills = new DataTables(tableIllsRef.current,
       {
           responsive: true,
@@ -190,7 +168,7 @@ export async function getTableAllDoctors(tableDoctorRef,user)
     if(user.accountWallet === '') return undefined;
     
     const results = await getListAllDoctors(user.accountWallet);
-    console.log(results);
+    //console.log(results);
     const city = results[0].data.data;
     const data = results[1].data.data;
     const list_doc_have_access = results[2].data.data[0].list_doc;
@@ -198,17 +176,17 @@ export async function getTableAllDoctors(tableDoctorRef,user)
     
     return new DataTables(tableDoctorRef.current,//$(tableRef.current).DataTable(
           {
-              responsive: true,
-              data: doctors,
-              columns: [
-                  { data: "num"},
-                  { data: 'initials' },
-                  { data: 'mail'},
-                  { data: 'profession' },
-                  { data: 'city' },
-                  { data: 'action'},
-                  { data: 'id'},
-                  { data: 'meta'}
+            responsive: true,
+            data: doctors,
+            columns: [
+                { data: "num"},
+                { data: 'initials' },
+                { data: 'mail'},
+                { data: 'profession' },
+                { data: 'city' },
+                { data: 'action'},
+                { data: 'id'},
+                { data: 'meta'}
               ],
           
               searchPanes: 
@@ -285,7 +263,6 @@ export async function getTableAllDoctors(tableDoctorRef,user)
               scroller:       true
 
              
-      });
+    });
 
 }
-

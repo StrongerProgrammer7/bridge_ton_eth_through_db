@@ -1,5 +1,6 @@
 import { getData, postData } from "../../../http/getDataAPI";
-import {changeButton,addActionForListDoctors,isExistsData} from "./utils";
+import {changeButton,addActionForListDoctors} from "./utils";
+import {  isExistsDatas } from '../total_utlls';
 
 async function updatelistDoctorsInDB(list_doctors,table_doctors,accountWallet,button)
 {
@@ -46,7 +47,7 @@ function updateListDoctorsByContractMethod(user,name_method,meta_person)
 export async function updateListDoctorsGiveRole(id_doctor,meta_doctor,user,dt,button)
 {
     console.log("update",id_doctor,meta_doctor,button);
-    if(!isExistsData({id_doctor,meta_doctor}))
+    if(!isExistsDatas({id_doctor,meta_doctor},['id_doctor','meta_doctor']))
     {
         console.log("Data is not correct");
         return;
@@ -68,7 +69,7 @@ export async function updateListDoctorsGiveRole(id_doctor,meta_doctor,user,dt,bu
 
 export async function updateListDoctorsRevokeRole(id_doctor,meta_doctor,user,dt,button)
 {
-    if(!isExistsData({id_doctor,meta_doctor}))
+    if(!isExistsDatas({id_doctor,meta_doctor},['id_doctor','meta_doctor']))
     {
         console.log("Data is not correct");
         return;

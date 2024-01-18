@@ -8,7 +8,7 @@ import { Context } from "../../../App";
 import { getTableActualIll, getTableAllDoctors, getTableAllIlls} from "./utils";
 import { updateListDoctorsGiveRole,updateListDoctorsRevokeRole } from "./helper";
 import MyTable from "../../../components/UI/Tables/MyTable";
-import { recalcTable, getRowData} from "../total_utlls";
+import {  getRowData, openTab} from "../total_utlls";
 
 const Profile = () =>
 {
@@ -26,14 +26,15 @@ const Profile = () =>
 
   useEffect(()=>
   {
-    if(!dt_ills)
+    console.log(user);
+    if(!dt_actualIlls)
       getTableActualIll(tableActualIllsRef,user)
       .then(data =>
         {
           console.log(data);
           setDT_actualIlls(data);
         });
-  },[user,user.accountWallet])
+  },[user,user.accountWallet,dt_actualIlls])
   useEffect(()=>
   {
     function handleClick(event) 
@@ -79,24 +80,14 @@ const Profile = () =>
               <Accordion.Header
               onClick={e =>
               {
-                if(isOpenDoctors === false)
-                {
-                  getTableAllDoctors(tableDoctorsRef,user)
-                  .then((data) =>
-                  setDT_doctors(data))
-                
-                  setOpenDoctors(true);
-                }else
-                {
-                  if(dt_doctors)
+                openTab(isOpenDoctors,getTableAllDoctors,
                   {
-                    console.log(dt_doctors);
-                    recalcTable(dt_doctors,200);
-
-                  }else
-                    setOpenDoctors(false); //TODO: Add button for get new data from server
-                }
-                
+                    dtRef:tableDoctorsRef,
+                    setDT:setDT_doctors,
+                    setOpenTab:setOpenDoctors,
+                    dt:dt_doctors
+                  },
+                  user);
               }}>
                   Список врачей
               </Accordion.Header>
@@ -121,25 +112,15 @@ const Profile = () =>
               <Accordion.Header
               onClick={e =>
                 {
-                  if(isOpenIlls === false)
-                  {
-                    getTableAllIlls(tableIllsRef, user)
-                    .then((data) =>
+                  openTab(isOpenIlls,getTableAllIlls,
                     {
-                      if(data)
-                        setDT_ills(data);
-                    });            
-                    setOpenIlls(true);
-                  }else
-                  {
-                    if(dt_ills && dt_actualIlls)
-                    {
-                      recalcTable(dt_ills,200);
-                      recalcTable(dt_actualIlls,200);
-                      
-                    }else
-                      setOpenIlls(false); //TODO: Add button for get new data from server
-                  }
+                      dtRef:tableIllsRef,
+                      setDT:setDT_ills,
+                      setOpenTab:setOpenIlls,
+                      dt:dt_ills
+                    },
+                    user);
+                  
                   
                 }}>
               Список болезней

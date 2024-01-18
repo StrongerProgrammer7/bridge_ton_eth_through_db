@@ -1,6 +1,6 @@
 // @ts-nocheck
 import { Navigate } from "react-router-dom";
-import ProfileDoctor from '../page/Profile_doctor/ProfileDoctor';
+import ProfileDoctor from '../page/Profile/Doctor/ProfileDoctor';
 import Profile from '../page/Profile/Patient/Profile';
 import Registration from '../page/Registration/Registration';
 
