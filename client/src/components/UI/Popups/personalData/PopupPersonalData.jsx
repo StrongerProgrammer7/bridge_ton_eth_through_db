@@ -1,6 +1,5 @@
 // @ts-nocheck
 
-
 import React,{memo,useContext} from 'react'
 import { useEffect } from 'react';
 import { useState } from 'react';
@@ -8,46 +7,10 @@ import Button from 'react-bootstrap/Button';
 import Form from 'react-bootstrap/Form';
 import Modal from 'react-bootstrap/Modal';
 import { Context } from '../../../../App';
-import { getDataAboutPatient,getDataAboutDoctor,  getCities ,changeData} from "./utils";
+import { getPersonalInfo ,changeData} from "./utils";
 import Spinner from 'react-bootstrap/Spinner';
-import { getData } from '../../../../http/getDataAPI';
 import MyInput from '../../Inputs/MyInput';
 import MySelect from '../../Selects/MySelect';
-
-
-async function getPersonalInfo(wallet,user,propsSet)
-{
-  if(user.user.isDoctor === false)
-  {
-    const data = await getDataAboutPatient(wallet);
-    const cities = await getCities();
-    console.log(cities);
-    propsSet.setPersonalInfo(data);
-    propsSet.setCities(cities);
-    user.addExtraData("extra",data);
-  }else
-  {
-    Promise.all([
-        await getDataAboutDoctor(wallet),
-        await getData("api/get_contacts_doctors"),
-        await getData("api/get_all_categories_doctors"),
-        await getData("api/get_hospitals"),
-        await getData("api/get_all_profession_doctors"),
-        ])
-        .then(results =>
-        {
-            console.log(results);
-            propsSet.setPersonalInfo(results[0][0]);
-            propsSet.setContacts(results[1].data.data);
-            propsSet.setCategories(results[2].data.data);
-            propsSet.setHospitals(results[3].data.data);
-            propsSet.setProfessions(results[4].data.data);
-            user.addExtraData("extra",results[0][0]);
-            
-        })
-        .catch(error=>console.log(error))
-    }
-}
 
 const PopupPersonalData = (props) => 
 {
@@ -65,11 +28,11 @@ const PopupPersonalData = (props) =>
     { 
         if(user && user.accountWallet === '') return;
         if(props.isSignIn === true) return;
-        console.log(user.accountWallet);
+        //console.log(user.accountWallet);
         getPersonalInfo(user.accountWallet,user,{setCategories,setCities,setContacts,setHospitals,setProfessions,setPersonalInfo});
         const idSet = setTimeout(()=>
         {
-            console.log(personalInfo);
+           //console.log(personalInfo);
             setLoadingPersonalData(false);
         },2500);
         return () =>

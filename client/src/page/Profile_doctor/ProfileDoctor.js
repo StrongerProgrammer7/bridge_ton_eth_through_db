@@ -267,9 +267,7 @@ const ProfileDoctor = () =>
                 
               }
               if(event.target.id === "btn_moreInfo_ill")
-              {
-                
-              }
+                console.log("TODO: show more information about ill");
               if(event.target.id === "btn_action_setDiagnosis")
               {
                 

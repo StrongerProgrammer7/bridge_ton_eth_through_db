@@ -1,5 +1,5 @@
 // @ts-nocheck
-import React , { useState,useContext, useLayoutEffect} from 'react';
+import React , { useState,useContext} from 'react';
 import { useLocation } from "react-router-dom";
 import MyNavbar from './UI/Navbar/MyNavbar';
 import { Context } from "../App";
@@ -52,7 +52,7 @@ const Navbar = () =>
             title = getTitle(curentPath) + user.user.name;
 
         setTitleNavbar(title);
-    },[name])
+    },[name,user.user.name,location.pathname])
  
     return (
         <>

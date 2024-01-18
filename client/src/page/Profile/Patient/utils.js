@@ -11,39 +11,7 @@ function createButton(class_text,id,text)
     return `<button class='${class_text}' id='${id}'>${text}</button>`;
 }
 
-const findTr = (event) =>
-{
-  const max_deep = 10;
-  let count = 0;
-  while(true)
-  {
-    count++;
-    if(count < max_deep && event.nodeName.toLowerCase() === "tr")
-      return event;
-    else
-      event = event.parentNode;
 
-    if(!event)
-      break;
-  }
-  return undefined;
-}
-
-export const getRowData = (event,dt_doctors) =>
-{
-    let  data = dt_doctors.row(event.target).data();
-    if(!data)
-    {
-        let tr = findTr(event.target);
-        if(!tr)
-        {
-            console.log("Tr not find, error with role");
-            throw new Error("Tr not find");
-        }
-        data = dt_doctors.row(tr).data()
-    }
-    return data;
-}
 export const isExistsData = (data) =>
 {
     return data.id_doctor !== null && data.id_doctor !== undefined && data.id_doctor !== "" && data.meta_doctor !== null && data.meta_doctor !== undefined && data.meta_doctor !== "";
@@ -321,11 +289,3 @@ export async function getTableAllDoctors(tableDoctorRef,user)
 
 }
 
-export function recalcTable(dt,ms)
-{
-    setTimeout(()=>
-    {   
-        dt.responsive.recalc();
-        dt.columns.adjust().responsive.recalc();
-    },ms)
-}

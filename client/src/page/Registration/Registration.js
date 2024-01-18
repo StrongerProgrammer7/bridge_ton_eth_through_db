@@ -10,6 +10,7 @@ import { getData } from "../../http/getDataAPI";
 import { optionCities, optionContacts_doctors, optionHospitals, optionCategory, optionProfession, checkData, registrationContractAndInDatabase} from './utils';
 //import { $host } from "../../http";
 import css from './registration.module.css';
+import { setLocalStorageItem } from "../../utils/helper";
 
 
 const Registration = observer(() =>
@@ -84,74 +85,67 @@ const Registration = observer(() =>
     const registrationPerson = async (event) =>
     {
         event.preventDefault();
-
-        if(password === repeatPassword)
-        {
-            const wallet = user.accountWallet;
-            const data ={
-                name,
-                surname,
-                lastname,
-                addressOfResidence,
-                addressRegistered,
-                insurancePolicy,
-                phone,
-                email,
-                bdate:birthDate,
-                meta:wallet,
-                password,
-                isDoctorRegistering,
-                contacts_id,
-                hospital_id,
-                category: categoriesDoctors,
-                profession: professionDoctors
-            }
-
-            if (checkData(data))
-            {
-                const response = await registrationContractAndInDatabase(data,user,registration_data);
-                console.log(response);
-
-                if(response && response.status && response.status >= 200 && response.status < 300)
-                {
-                    if(error.status === true)
-                        setError({status:false,error:''});
-                    setSuccessRegistration({status:true,message:response.data.success});
-                    
-                    try 
-                    {
-                        if(registration_data.isRegistredDB)
-                            window.localStorage.setItem("registration_db",registration_data.isRegistredDB)  
-                        if(registration_data.isRegistredContract)
-                            window.localStorage.setItem("registration_contract",registration_data.isRegistredContract);
-                        if(registration_data.isRegistredDB && registration_data.isRegistredContract)
-                        {
-                            registration_data.setIsRegistered(true);
-                            window.localStorage.setItem("registrationSuccess",true);
-                        }
-                    } catch (error) 
-                    {
-                        console.log("Error with work localStorage");
-                        console.error(error);    
-                    }
-
-                    setTimeout(()=>
-                    {
-                        window.open("/",'_self');
-                    },8000)
-                }else
-                {
-                    setError({status:true, error: response.data.message});
-                }
-             }
-            
-        }else
+        if(password !== repeatPassword)
         {
             setError({status:true, error: 'Пароли не совпадают'});
             setTimeout(()=>
             {
                 setError({status:false,error:''});
             },5000);
+            return;
+        }
+        const wallet = user.accountWallet;
+        const data ={
+            name,
+            surname,
+            lastname,
+            addressOfResidence,
+            addressRegistered,
+            insurancePolicy,
+            phone,
+            email,
+            bdate:birthDate,
+            meta:wallet,
+            password,
+            isDoctorRegistering,
+            contacts_id,
+            hospital_id,
+            category: categoriesDoctors,
+            profession: professionDoctors
+        }
+        if(!checkData(data))
+        {
+            setError({status:true, error: 'Данные не корректны проверьте введенные данные'});
+            setTimeout(()=>
+            {
+                setError({status:false,error:''});
+            },5000);
+            return;
+        }
+        const response = await registrationContractAndInDatabase(data,user,registration_data);
+        console.log(response);
+        if(response && response.status && response.status >= 200 && response.status < 300)
+        {
+            if(error.status === true)
+                setError({status:false,error:''});
+            setSuccessRegistration({status:true,message:response.data.success});
+            
+            if(registration_data.isRegistredDB)
+                setLocalStorageItem('registration_db',registration_data.isRegistredDB); 
+            if(registration_data.isRegistredContract)
+                setLocalStorageItem('registration_contract',registration_data.isRegistredContract);
+            if(registration_data.isRegistredDB && registration_data.isRegistredContract)
+            {
+                registration_data.setIsRegistered(true);
+                setLocalStorageItem('registrationSuccess',true);
+            }
+            setTimeout(()=>
+            {
+                window.open("/",'_self');
+            },8000)
+        }else
+        {
+            setError({status:true, error: response.data.message});
         }
         
     }   

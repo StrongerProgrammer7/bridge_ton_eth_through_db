@@ -21,80 +21,75 @@ async function updatelistDoctorsInDB(list_doctors,table_doctors,accountWallet,bu
     .catch(error=> console.log("Error with update DB"));
 }
 
+function updateListDoctorsByContractMethod(user,name_method,meta_person)
+{
+    return user.contract.methods[name_method](meta_person).send({from :user.accountWallet})
+    .then((res) =>
+    {
+        user.contract.getPastEvents("allEvents",
+        {                               
+            fromBlock: 'latest',     
+            toBlock: 'latest'     
+        })
+        .then((events) => 
+        {
+            console.log(events);
+        })
+        .catch((err) => console.error(err));
+    })
+    .catch((error) =>
+    {
+        console.log("Error with work contract");
+        console.error(error);
+    })
+}
 export async function updateListDoctorsGiveRole(id_doctor,meta_doctor,user,dt,button)
 {
     console.log("update",id_doctor,meta_doctor,button);
-    if(isExistsData({id_doctor,meta_doctor}))
+    if(!isExistsData({id_doctor,meta_doctor}))
     {
-        
-        await user.contract.methods.giveRole(meta_doctor).send({from :user.accountWallet})
-        .then((res) =>
-        {
-           // console.log(res);
-            user.contract.getPastEvents("allEvents",
-            {                               
-                fromBlock: 'latest',     
-                toBlock: 'latest'     
-            })
-            .then((events) => 
-            {
-                console.log(events);
-            })
-            .catch((err) => console.error(err));
-            
-        })
-        .then(async () =>
-        {
-            user.pushList_doctors(id_doctor);
-            console.log(user.listDoctors);
-            let temp_list = user.listDoctors.toString();
-            updatelistDoctorsInDB(temp_list,dt,user.accountWallet,button);
-        })
-        .catch((err) =>
-        {
-            console.log('Error with contract or user denied',err);
-        });
-       
-    }       
+        console.log("Data is not correct");
+        return;
+    }
+    updateListDoctorsByContractMethod(user,'giveRole',meta_doctor)
+    .then(async () =>
+    {
+        user.pushList_doctors(id_doctor);
+        console.log(user.listDoctors);
+        let temp_list = user.listDoctors.toString();
+        updatelistDoctorsInDB(temp_list,dt,user.accountWallet,button);
+    })
+    .catch((err) =>
+    {
+        console.log('Error with contract or user denied',err);
+    });    
     
 }
 
 export async function updateListDoctorsRevokeRole(id_doctor,meta_doctor,user,dt,button)
 {
-    if(isExistsData({id_doctor,meta_doctor}))
+    if(!isExistsData({id_doctor,meta_doctor}))
     {
-        await user.contract.methods.anualRole(meta_doctor).send({from :user.accountWallet}).then((res) =>
-        {
-            console.log(res);
-            user.contract.getPastEvents("allEvents",
-            {                               
-                fromBlock: 'latest',     
-                toBlock: 'latest'     
-            })
-            .then((events) => console.log(events))
-            .catch((err) => console.error(err));
-            
-        })
-        .then(async () =>
-        {
-            const index = user.listDoctors.indexOf(id_doctor);
-            if(index !== -1)
-            {
-                let _list = user.listDoctors;
-                console.log(_list);
-                _list.splice(index,1);
-                const _list_str = _list.toString();
-                user.setNewListDoctors(_list);
-                console.log(_list);
-                updatelistDoctorsInDB(_list_str,dt,user.accountWallet,button);
-            }
-        })
-        .catch((err) =>
-        {
-            console.log('Error with contract or user denied',err);
-        });
-       
-    }       
+        console.log("Data is not correct");
+        return;
+    }
+    
+    updateListDoctorsByContractMethod(user,'anualRole',meta_doctor) 
+    .then(async () =>
+    {
+        const index = user.listDoctors.indexOf(id_doctor);
+        if(index === -1) return;
+        let _list = user.listDoctors;
+        _list.splice(index,1);
+        const _list_str = _list.toString();
+        user.setNewListDoctors(_list);
+
+        updatelistDoctorsInDB(_list_str,dt,user.accountWallet,button);
+    })
+    .catch((err) =>
+    {
+        console.log('Error with contract or user denied',err);
+    });
     
 }
 
