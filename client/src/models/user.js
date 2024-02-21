@@ -1,6 +1,7 @@
 // @ts-nocheck
 import ActionTypes from "../store/enums/ActionTypes";
 import { setWhoIs, pushList, removeElemFromList, addExtraDataPersonalInfo } from "./methods";
+
 const initialState =
 {
     accountWallet: '',
@@ -13,7 +14,9 @@ const initialState =
         id: undefined
     },
     contract: '',
-    listDoctorsAccess: []
+    listDoctorsAccess: [],
+    isAuth: false,
+    loading: true,
 }
 
 
@@ -30,16 +33,20 @@ export function userReducer(state = initialState, action)
         case ActionTypes.EXTRA_DATA:
             return { ...state, personalInfo: addExtraDataPersonalInfo(state, action.payload.key, action.payload.data) };
         case ActionTypes.ADD_DOCTOR:
-            return { ...state, listDoctorsAccess: pushList(listDoctorsAccess, action.payload) };
+            return { ...state, listDoctorsAccess: pushList(state.listDoctorsAccess, action.payload) };
         case ActionTypes.REMOVE_DOCTOR:
-            return { ...state, listDoctorsAccess: removeElemFromList(listDoctorsAccess, action.payload) };
+            return { ...state, listDoctorsAccess: removeElemFromList(state.listDoctorsAccess, action.payload) };
         case ActionTypes.NEW_LIST_DOCTOR:
             return { ...state, listDoctorsAccess: action.payload };
+        case ActionTypes.IS_AUTH:
+            return { ...state, isAuth: action.payload };
+        default:
+            return state;
     }
 }
 
 
-export const Controls =
+export const UserControls =
 {
     setAccountWallet: (value) => ({
         type: ActionTypes.ACCOUNT_WALLET,
@@ -67,6 +74,10 @@ export const Controls =
     }),
     addExtraDataPersonalInfo: (value) => ({
         type: ActionTypes.EXTRA_DATA,
+        payload: value
+    }),
+    setAuth: (value) => ({
+        type: ActionTypes.IS_AUTH,
         payload: value
     })
 }

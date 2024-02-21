@@ -7,7 +7,16 @@ const ActionTypes =
     ADD_DOCTOR: 'ADD_DOCTOR',
     REMOVE_DOCTOR: 'REMOVE_DOCTOR',
     NEW_LIST_DOCTOR: 'NEW_LIST_DOCTOR',
-    EXTRA_DATA: 'EXTRA_DATA'
+    EXTRA_DATA: 'EXTRA_DATA',
+    IS_AUTH: 'IS_AUTH',
+    LOADING: 'LOADING',
 };
+
+export const ActionRegistration =
+{
+    IS_EXISTS_DATA_IN_DB: 'IS_EXISTS_DATA_IN_DB',
+    IS_EXISTS_DATA_IN_CONTRACT: 'IS_EXISTS_DATA_IN_CONTRACT',
+    IS_REGISTRATION: 'IS_REGISTRATION',
+}
 
 export default ActionTypes;
