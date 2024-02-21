@@ -1,7 +1,6 @@
 // @ts-nocheck
 import React, { useContext, useEffect, useState } from "react";
 import { Form } from "react-bootstrap";
-import { observer } from "mobx-react-lite";
 import {  Context } from "../../App";
 
 
@@ -13,7 +12,7 @@ import css from './registration.module.css';
 import { setLocalStorageItem } from "../../utils/helper";
 
 
-const Registration = observer(() =>
+const Registration = () =>
 {
 
     const { user } = useContext(Context);
@@ -338,7 +337,7 @@ const Registration = observer(() =>
         
     </>
     )
-});
+};
 
 export default Registration;
 
