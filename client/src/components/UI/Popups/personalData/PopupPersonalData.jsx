@@ -6,7 +6,7 @@ import { useState } from 'react';
 import Button from 'react-bootstrap/Button';
 import Form from 'react-bootstrap/Form';
 import Modal from 'react-bootstrap/Modal';
-import { Context } from '../../../../App';
+import { Context } from '../../../../';
 import { getPersonalInfo ,changeData} from "./utils";
 import Spinner from 'react-bootstrap/Spinner';
 import MyInput from '../../Inputs/MyInput';

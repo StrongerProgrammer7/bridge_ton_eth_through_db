@@ -1,15 +1,16 @@
 // @ts-nocheck
 import React, { useContext } from "react";
 import { Route, Routes } from 'react-router-dom';
-import { Context } from "../App";
+import { Context } from "../";
 import { privateRoutes,publicRouters } from "../router/Router";
 import Spinner from 'react-bootstrap/Spinner';
+import { useSelector } from "react-redux";
 
 
 const AppRouter = () =>
 {
-    const { isAuth,isLoading } = useContext(Context);
-
+    const { isLoading } = useContext(Context);
+    const user = useSelector(state => state.userReducer);
     if(isLoading)
     {
         return(
@@ -22,7 +23,7 @@ const AppRouter = () =>
     return (
         <>
         {
-        isAuth
+        user.isAuth
         ?
         <Routes>
             <Route path="/">

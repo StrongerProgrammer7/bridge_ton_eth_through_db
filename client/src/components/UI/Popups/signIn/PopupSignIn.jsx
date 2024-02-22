@@ -5,7 +5,7 @@ import { memo } from 'react';
 import Button from 'react-bootstrap/Button';
 import Form from 'react-bootstrap/Form';
 import Modal from 'react-bootstrap/Modal';
-import { Context } from '../../../../App';
+import { Context } from '../../../../';
 import { signIn } from './utils';
 
 const PopupSignIn = (props) => 

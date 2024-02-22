@@ -9,7 +9,7 @@ import Navbar from 'react-bootstrap/Navbar';
 
 import SwitchCircle from "../checkboxes/SwitchCircle";
 import { REGISTRATION_ROUTE,MAIN_ROUTE, PROFILEDOCTOR_ROUTER, PROFILE_ROUTE } from "../../../utils/consts";
-import { Context } from "../../../App";
+import { Context } from "../../../";
 import Spinner from 'react-bootstrap/Spinner';
 import { useEffect } from "react";
 

@@ -1,0 +1,4 @@
+node_modules
+public/*
+contract/ABIandAddress.json
+contract/accounts.json

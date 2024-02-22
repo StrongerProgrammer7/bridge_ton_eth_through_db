@@ -2,7 +2,7 @@
 import React , { useState,useContext} from 'react';
 import { useLocation } from "react-router-dom";
 import MyNavbar from './UI/Navbar/MyNavbar';
-import { Context } from "../App";
+import { Context } from "../";
 
 import { Button } from 'react-bootstrap';
 import PopupPersonalData from './UI/Popups/personalData/PopupPersonalData';

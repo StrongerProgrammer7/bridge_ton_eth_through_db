@@ -2,7 +2,7 @@
 import React , {useState, useContext} from 'react';
 
 import css from "./switchCircle.module.css";
-import { Context } from "../../../App";
+import { Context } from "../../../";
 import {connectMetamask} from './utils';
 import { memo } from 'react';
 
