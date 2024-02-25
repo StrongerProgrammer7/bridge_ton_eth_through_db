@@ -1,7 +1,6 @@
 // @ts-nocheck
-import React, { useContext, useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Form } from "react-bootstrap";
-import { Context } from "../../";
 
 
 import { getData } from "../../http/getDataAPI";
@@ -10,13 +9,16 @@ import { optionCities, optionContacts_doctors, optionHospitals, optionCategory, 
 //import { $host } from "../../http";
 import css from './registration.module.css';
 import { setLocalStorageItem } from "../../utils/helper";
-
+import { useDispatch, useSelector } from "react-redux";
+import { checkRegistrationControls } from "../../models/checkIsRegistered";
 
 const Registration = () =>
 {
+    const user = useSelector(state => state.userReducer);
+    const isRegisteredUser = useSelector(state => state.checkRegistrationDataReducer);
+    const dispatch = useDispatch();
 
-    const { user } = useContext(Context);
-    const registration_data = useContext(Context);
+    //const registration_data = useContext(Context);
 
     const [options_cities, setOptionsCities] = useState([]);
     const [options_hospitals, setOptionsHospitals] = useState([]);
@@ -121,7 +123,7 @@ const Registration = () =>
             }, 5000);
             return;
         }
-        const response = await registrationContractAndInDatabase(data, user, registration_data);
+        const response = await registrationContractAndInDatabase(data, user, dispatch);
         console.log(response);
         if (response && response.status && response.status >= 200 && response.status < 300)
         {
@@ -129,13 +131,14 @@ const Registration = () =>
                 setError({ status: false, error: '' });
             setSuccessRegistration({ status: true, message: response.data.success });
 
-            if (registration_data.isRegistredDB)
-                setLocalStorageItem('registration_db', registration_data.isRegistredDB);
-            if (registration_data.isRegistredContract)
-                setLocalStorageItem('registration_contract', registration_data.isRegistredContract);
-            if (registration_data.isRegistredDB && registration_data.isRegistredContract)
+            if (isRegisteredUser.isRegisteredDB)
+                setLocalStorageItem('registration_db', isRegisteredUser.isRegisteredDB);
+            if (isRegisteredUser.isRegisteredContract)
+                setLocalStorageItem('registration_contract', isRegisteredUser.isRegisteredContract);
+            if (isRegisteredUser.isRegisteredDB && isRegisteredUser.isRegisteredContract)
             {
-                registration_data.setIsRegistered(true);
+                dispatch(checkRegistrationControls.setRegistered(true));
+                //registration_data.setIsRegistered(true);
                 setLocalStorageItem('registrationSuccess', true);
             }
             setTimeout(() =>

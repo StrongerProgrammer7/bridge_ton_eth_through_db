@@ -1,6 +1,5 @@
 // @ts-nocheck
 import React, { useContext, useState, useEffect, useRef } from "react";
-import { Context } from "../../../";
 import css from './profile_doctor.module.css';
 import Accordion from 'react-bootstrap/Accordion';
 import { addRow, changeRow, isExistsAcessShowModal } from "./utils";
@@ -8,11 +7,12 @@ import { getListPatients, getListIllsPatients } from "./helper";
 import { getRowData, openTab } from "../total_utlls";
 import SetDiagnosis from "../../../components/UI/Popups/set_diagnosis/SetDiagnosis";
 import MyTable from "../../../components/UI/Tables/MyTable";
+import { useDispatch, useSelector } from "react-redux";
 
 
 const ProfileDoctor = () =>
 {
-  const { user } = useContext(Context);
+  const user = useSelector(state => state.userReducer);
 
   const tablePatientRef = useRef();
   const tableIllsRef = useRef();
@@ -75,7 +75,7 @@ const ProfileDoctor = () =>
     } else
     {
       const result = newDataAboutPatient.data;
-      changeRow(result, user, dt_ills, setNewDataAboutPatient);
+      changeRow(result, dt_ills, setNewDataAboutPatient);
     }
 
   }, [newDataAboutPatient]);

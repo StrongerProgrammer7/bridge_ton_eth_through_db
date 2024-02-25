@@ -1,6 +1,6 @@
 // @ts-nocheck
 import ActionTypes from "../store/enums/ActionTypes";
-import { setWhoIs, pushList, removeElemFromList, addExtraDataPersonalInfo } from "./methods";
+import { setWhoIs, pushList, removeElemFromList, addExtraDataPersonalInfo, clearPersonalData } from "./methods";
 
 const initialState =
 {
@@ -40,6 +40,12 @@ export function userReducer(state = initialState, action)
             return { ...state, listDoctorsAccess: action.payload };
         case ActionTypes.IS_AUTH:
             return { ...state, isAuth: action.payload };
+        case ActionTypes.NAME_WALLET:
+            return { ...state, personalInfo: { ...state.personalInfo, nameWallet: action.payload } };
+        case ActionTypes.LOADING:
+            return { ...state, loading: action.payload };
+        case ActionTypes.CLEAR_DATA:
+            return { ...state, personalInfo: clearPersonalData() };
         default:
             return state;
     }
@@ -79,5 +85,16 @@ export const UserControls =
     setAuth: (value) => ({
         type: ActionTypes.IS_AUTH,
         payload: value
+    }),
+    setNameWallet: (value) => ({
+        type: ActionTypes.NAME_WALLET,
+        payload: value
+    }),
+    setLoading: (value) => ({
+        type: ActionTypes.LOADING,
+        payload: value
+    }),
+    clearData: () => ({
+        type: ActionTypes.CLEAR_DATA
     })
 }

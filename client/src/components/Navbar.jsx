@@ -2,7 +2,6 @@
 import React , { useState,useContext} from 'react';
 import { useLocation } from "react-router-dom";
 import MyNavbar from './UI/Navbar/MyNavbar';
-import { Context } from "../";
 
 import { Button } from 'react-bootstrap';
 import PopupPersonalData from './UI/Popups/personalData/PopupPersonalData';
@@ -10,6 +9,9 @@ import PopupSignIn from './UI/Popups/signIn/PopupSignIn';
 import { removeLocalStorageItem } from '../utils/helper';
 import { PROFILE_ROUTE, PROFILEDOCTOR_ROUTER, MAIN_ROUTE } from '../utils/consts';
 import { useEffect } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { UserControls } from '../models/user';
+
 const getTitle = (curentPath) =>
 {
     if(curentPath === PROFILEDOCTOR_ROUTER)
@@ -20,11 +22,13 @@ const getTitle = (curentPath) =>
 }
 
 
-function logout(setIsAuth)
+function logout(dispatch)
 {
     try 
     {
-        setIsAuth(false);
+        dispatch(UserControls.setAuth(false));
+        dispatch(UserControls.setNewListDoctor([]));
+        dispatch(UserControls.clearData());
         removeLocalStorageItem('isAuth');
        
     } catch (error) 
@@ -37,7 +41,9 @@ function logout(setIsAuth)
 const Navbar = () => 
 {
     const location = useLocation();
-    const { user,isAuth,isLogIn,setIsAuth , name} = useContext(Context);
+    const user = useSelector(state => state.userReducer);
+    const dispatch = useDispatch();
+
     const [titleNavbar,setTitleNavbar] = useState("Система взаимодействия");
 
     const [show, setShow] = useState(false);
@@ -49,11 +55,10 @@ const Navbar = () =>
         const curentPath = location.pathname;
         let title = getTitle(curentPath);
         if(curentPath !== MAIN_ROUTE)
-            title = getTitle(curentPath) + user.user.name;
+            title = getTitle(curentPath) + user.personalInfo.name;
 
         setTitleNavbar(title);
-    },[name,user.user.name,location.pathname])
- 
+    },[user.personalInfo.name,location.pathname])
     return (
         <>
         <MyNavbar 
@@ -64,30 +69,25 @@ const Navbar = () =>
         <>
             <Button 
             variant="light" 
-            onClick={e => 
-            {
-                if(isLogIn)
-                    window.open("/profile","_self");
-                else
-                    handleShow();
-            }}
+            onClick={e => handleShow()}
             className="me-2"
             >
-            {isAuth ? 'Личные данные': 'Войти'}
+            {user.isAuth  ? 'Личные данные': 'Войти'}
             </Button>
             {
-                isAuth  ?  
+                user.isAuth  ?  
                 <>
-                <PopupPersonalData 
-                    show={show} 
-                    handleClose={handleClose}
-                    titleModal={"Изменить данные"}/>
-                  
-                    <Button className="me-2" variant="danger" onClick={e => 
-                        {
-                            logout(setIsAuth);
-                        }}>
-                        Выход
+                    <PopupPersonalData 
+                        show={show} 
+                        handleClose={handleClose}
+                        titleModal={ "Изменить данные" }
+                    />
+                      
+                    <Button
+                        className="me-2"
+                        variant="danger"
+                        onClick={ e => logout(dispatch) }>
+                            Выход
                     </Button>
                 </>
                 : 
@@ -96,7 +96,7 @@ const Navbar = () =>
                     handleClose={handleClose} 
                     titleModal={"Вход в профиль"} 
                     wallet={user.accountWallet}
-                    isDoctor={user.user.isDoctor}/>
+                    isDoctor={user.personalInfo.isDoctor}/>
             }
         </>
         </MyNavbar>

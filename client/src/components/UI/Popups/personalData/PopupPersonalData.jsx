@@ -1,48 +1,71 @@
 // @ts-nocheck
 
-import React,{memo,useContext} from 'react'
-import { useEffect } from 'react';
-import { useState } from 'react';
+import React,{memo,useEffect,useState} from 'react'
 import Button from 'react-bootstrap/Button';
 import Form from 'react-bootstrap/Form';
 import Modal from 'react-bootstrap/Modal';
-import { Context } from '../../../../';
+
 import { getPersonalInfo ,changeData} from "./utils";
 import Spinner from 'react-bootstrap/Spinner';
 import MyInput from '../../Inputs/MyInput';
 import MySelect from '../../Selects/MySelect';
+import { useDispatch, useSelector } from 'react-redux';
+import { UserControls } from '../../../../models/user';
 
+
+function dataPatientIsReady(isDoctor,personalInfo,cities)
+{
+  return isDoctor == false && personalInfo && cities;
+}
+
+function dataDoctorIsReady(isDoctor,personalInfo , hospitals , categories , professions , contacts)
+{
+  return isDoctor && personalInfo && hospitals && categories && professions && contacts;
+}
 const PopupPersonalData = (props) => 
 {
-    const { user} = useContext(Context);
-    const [isLoadingPersonalData,setLoadingPersonalData] = useState(true);
+    const user = useSelector(state => state.userReducer);
+    const dispatch = useDispatch();
+
     const [personalInfo,setPersonalInfo] = useState(null);
     const [cities,setCities] = useState(null);
     const [categories,setCategories] = useState(null);
     const [contacts,setContacts] = useState(null);
     const [hospitals,setHospitals] = useState(null);
     const [professions,setProfessions] = useState(null);
-
-   
-    useEffect(()=>
-    { 
-        if(user && user.accountWallet === '') return;
-        if(props.isSignIn === true) return;
-        //console.log(user.accountWallet);
-        getPersonalInfo(user.accountWallet,user,{setCategories,setCities,setContacts,setHospitals,setProfessions,setPersonalInfo});
-        const idSet = setTimeout(()=>
-        {
-           //console.log(personalInfo);
-            setLoadingPersonalData(false);
-        },2500);
-        return () =>
-        {
-            clearTimeout(idSet);
-        };
-    },[user,user.accountWallet,props.isSignIn])
-
+    const [isLoadUser, setLoadUser] = useState(false);
 
     
+  useEffect(()=>
+  { 
+    console.log(typeof user.accountWallet, user.accountWallet === '')
+    if (user.accountWallet !== '' && user.personalInfo.id )
+      setLoadUser(true);
+
+    },[user.accountWallet,user.personalInfo.id])
+
+  useEffect(() =>
+  {
+      getPersonalInfo(user, dispatch,{setCategories,setCities,setContacts,setHospitals,setProfessions,setPersonalInfo})
+        .then((results) =>
+        {
+          console.log(results);
+          if(results)
+          {
+            setPersonalInfo(results[0][0]);
+            setContacts(results[1].data.data);
+            setCategories(results[2].data.data);
+            setHospitals(results[3].data.data);
+            setProfessions(results[4].data.data);
+
+            dispatch(UserControls.addExtraDataPersonalInfo({ key: "extra", data: results[0][0] }));
+            dispatch(UserControls.setLoading(false));
+          }
+        })
+      .catch(error => console.error(error))
+      
+  },[isLoadUser])
+
   return (
     <Modal show={props.show} onHide={props.handleClose}>
           <Modal.Header closeButton>
@@ -52,13 +75,14 @@ const PopupPersonalData = (props) =>
             <Modal.Body>
             <Form>
               {
-              isLoadingPersonalData === false ? 
+            (dataPatientIsReady(user.personalInfo.isDoctor, personalInfo, cities)) ||
+              (dataDoctorIsReady(user.personalInfo.isDoctor,personalInfo,hospitals,categories,professions,contacts)) ? 
               <>
                
                <MyInput
                 labelText={'Имя'}
                 type={'text'}
-                object={personalInfo}
+                formData={personalInfo}
                 _key={'name'}
                 setChangeObject={setPersonalInfo}
                 placeholderText='Имя'
@@ -66,7 +90,7 @@ const PopupPersonalData = (props) =>
                 <MyInput
                 labelText={'Фамилия'}
                 type={'text'}
-                object={personalInfo}
+                formData={personalInfo}
                 _key={'surname'}
                 setChangeObject={setPersonalInfo}
                 placeholderText='Фамилия'
@@ -74,26 +98,26 @@ const PopupPersonalData = (props) =>
                 <MyInput
                 labelText={'Отчество'}
                 type={'text'}
-                object={personalInfo}
+                formData={personalInfo}
                 _key={'lastname'}
                 setChangeObject={setPersonalInfo}
                 placeholderText='Отчество'
                 ></MyInput>
 
                 {
-                  user.user.isDoctor === false ?
+                  user.personalInfo.isDoctor === false ?
                   <>
                     <MySelect
                   labelText={'Адрес проживания'}
-                  object={personalInfo}
+                  formData={personalInfo}
                   _key={'addressResidence'}
                   elements={cities}
-                  setObject={setPersonalInfo}
+                  setFormData={setPersonalInfo}
                   arrKey={['region','city']}
                   />                  
                   <MySelect
                   labelText={'Адрес  по прописке'}
-                  object={personalInfo}
+                  formData={personalInfo}
                   _key={'city'}
                   elements={cities}
                   setObject={setPersonalInfo}
@@ -104,7 +128,7 @@ const PopupPersonalData = (props) =>
                 <>
                 <MySelect
                   labelText={'Категория'}
-                  object={personalInfo}
+                  formData={personalInfo}
                   _key={'category'}
                   elements={categories}
                   setObject={setPersonalInfo}
@@ -112,7 +136,7 @@ const PopupPersonalData = (props) =>
                   />    
                   <MySelect
                   labelText={'Специальность'}
-                  object={personalInfo}
+                  formData={personalInfo}
                   _key={'profession'}
                   elements={professions}
                   setObject={setPersonalInfo}
@@ -123,7 +147,7 @@ const PopupPersonalData = (props) =>
                 <MyInput
                 labelText={'Телефон'}
                 type={'phone'}
-                object={personalInfo}
+                formData={personalInfo}
                 _key={'phone'}
                 setChangeObject={setPersonalInfo}
                 placeholderText='Телефон'
@@ -131,18 +155,18 @@ const PopupPersonalData = (props) =>
                 <MyInput
                 labelText={'Почта'}
                 type={'email'}
-                object={personalInfo}
+                formData={personalInfo}
                 _key={'mail'}
                 setChangeObject={setPersonalInfo}
                 placeholderText='Почта'
                 />                
                 {
-                    user.user.isDoctor=== false ?
+                    user.personalInfo.isDoctor=== false ?
                     <>
                         <MyInput
                         labelText={'Страховой полис'}
                         type={'text'}
-                        object={personalInfo}
+                        formData={personalInfo}
                         _key={'insurance_policy'}
                         setChangeObject={setPersonalInfo}
                         placeholderText='Страховой полис'
@@ -150,7 +174,7 @@ const PopupPersonalData = (props) =>
                         <MyInput
                         labelText={'Дата рождения'}
                         type={'date'}
-                        object={personalInfo}
+                        formData={personalInfo}
                         _key={'datebirthd'}
                         setChangeObject={setPersonalInfo}
                         />                     
@@ -159,7 +183,7 @@ const PopupPersonalData = (props) =>
                     <>
                         <MySelect
                             labelText={'Больница'}
-                            object={personalInfo}
+                            formData={personalInfo}
                             _key={'hospital_id'}
                             elements={hospitals}
                             setObject={setPersonalInfo}
@@ -168,7 +192,7 @@ const PopupPersonalData = (props) =>
 
                             <MySelect
                                 labelText={'Контакты'}
-                                object={personalInfo}
+                                formData={personalInfo}
                                 _key={'contacts_id'}
                                 elements={contacts}
                                 setObject={setPersonalInfo}
@@ -177,9 +201,9 @@ const PopupPersonalData = (props) =>
                     </>
                 }
                 <MyInput
-                labelText={'Дата рождения'}
+                labelText={'Кошелек'}
                 type={'text'}
-                object={user}
+                formData={user}
                 _key={'accountWallet'}
                 setChangeObject={null}
                 _disabled={true}
@@ -202,11 +226,7 @@ const PopupPersonalData = (props) =>
             <Button variant="secondary" onClick={props.handleClose}>
                  Закрыть
             </Button>
-            <Button variant="primary" onClick={e => 
-            {
-                changeData(personalInfo);
-                
-            }}>
+            <Button variant="primary" onClick={e => changeData(personalInfo)}>
                 Сохранить изменения
             </Button>
           </Modal.Footer>

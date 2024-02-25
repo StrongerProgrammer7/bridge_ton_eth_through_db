@@ -11,7 +11,8 @@ const AppRouter = () =>
 {
     const { isLoading } = useContext(Context);
     const user = useSelector(state => state.userReducer);
-    if(isLoading)
+
+    if(user.loading)
     {
         return(
             <Spinner animation="border" role="status">
@@ -19,6 +20,7 @@ const AppRouter = () =>
             </Spinner>
         );
     }
+    
 
     return (
         <>

@@ -1,3 +1,4 @@
+// @ts-nocheck
 
 
 import React from 'react'
@@ -24,27 +25,42 @@ const getOptionWithId = (elem,personalInfoKey,personalInfo,arrKey) =>
 
 const getIDElemUser = (elems,object,_key) =>
 {
-    for(let i =0;i<elems.length;i++)
-    {
-        if(!elems[i].id)
-            return undefined;
-        if(elems[i].city === object[_key])
-            return elems[i].id;
-    }
+    if (elems)
+      for(let i =0;i<elems.length;i++)
+      {
+          if(!elems[i].id)
+              return undefined;
+          if(elems[i].city === object[_key])
+              return elems[i].id;
+      }
     return undefined;
 }
 
-const MySelect = ({labelText,object,_key,setObject,elements,arrKey}) => 
+const debounce = (fn, ms = 300) => 
 {
-    const idElem = getIDElemUser(elements,object,_key);
+  let timeoutId;
+  return function () 
+  {
+    clearTimeout(timeoutId);
+    timeoutId = setTimeout(() => 
+    {
+      fn.apply(this, arguments);
+    }, ms);
+  };
+};
+
+const MySelect = ({labelText,formData,_key,setFormData,elements,arrKey}) => 
+{
+    const debounced = debounce(setFormData, 3000);
+    const idElem = getIDElemUser(elements,formData,_key);
     return (
         <div className="input-group input-group-sm mb-3">
             <span className="input-group-text" id="inputGroup-sizing-sm">{labelText}</span>
-            <select className="form-control" defaultValue={idElem ? `${idElem}` : object[_key]}
+            <select className="form-control" defaultValue={idElem ? `${idElem}` : formData[_key]}
             onChange={(e)=>
             {
-                object[_key] = e.target.value;
-                setObject(object);
+                formData[_key] = e.target.value;
+                debounced(formData);
             }}>
                 {
                     elements.map((elem) =>
@@ -52,10 +68,10 @@ const MySelect = ({labelText,object,_key,setObject,elements,arrKey}) =>
                         
                         if(elem.id)
                         {
-                            return getOptionWithId(elem,_key,object,arrKey);
+                            return getOptionWithId(elem,_key,formData,arrKey);
                         }else
                         {
-                            return getOptionByKey(elem,_key,object)
+                            return getOptionByKey(elem,_key,formData)
                         }
                     })
                 }

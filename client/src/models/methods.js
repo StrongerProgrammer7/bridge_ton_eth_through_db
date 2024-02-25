@@ -45,3 +45,14 @@ export function addExtraDataPersonalInfo(state, key, data)
     state.personalInfo[key] = data;
     return state.personalInfo;
 }
+
+export function clearPersonalData()
+{
+    return {
+        name: "",
+        isDoctor: false,
+        isPatient: false,
+        nameWallet: '',
+        id: undefined
+    }
+}

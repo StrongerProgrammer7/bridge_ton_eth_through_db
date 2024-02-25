@@ -1,18 +1,20 @@
 /* eslint-disable no-undef */
 // @ts-nocheck
-import React, { useContext, useState, useRef, useEffect } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import css from './profile.module.css';
 import Accordion from 'react-bootstrap/Accordion';
-import { Context } from "../../../";
+
 
 import { getTableActualIll, getTableAllDoctors, getTableAllIlls } from "./utils";
 import { updateListDoctorsGiveRole, updateListDoctorsRevokeRole } from "./helper";
 import MyTable from "../../../components/UI/Tables/MyTable";
 import { getRowData, openTab } from "../total_utlls";
+import { useDispatch, useSelector } from "react-redux";
 
 const Profile = () =>
 {
-  const { user } = useContext(Context);
+  const user = useSelector(state => state.userReducer);
+  const dispatch = useDispatch();
 
   const tableDoctorsRef = useRef();
   const tableIllsRef = useRef();
@@ -26,7 +28,7 @@ const Profile = () =>
 
   useEffect(() =>
   {
-    console.log(user);
+
     if (!dt_actualIlls)
       getTableActualIll(tableActualIllsRef, user)
         .then(data =>
@@ -34,7 +36,7 @@ const Profile = () =>
           console.log(data);
           setDT_actualIlls(data);
         });
-  }, [user, user.accountWallet, dt_actualIlls])
+  }, [user.accountWallet, dt_actualIlls])
   useEffect(() =>
   {
     function handleClick(event) 
@@ -43,13 +45,13 @@ const Profile = () =>
       {
         const data = getRowData(event, dt_doctors);
         if (data)
-          updateListDoctorsGiveRole(data.id, data.meta, user, dt_doctors, event.target);
+          updateListDoctorsGiveRole(data.id, data.meta, user, dispatch, dt_doctors, event.target);
       }
       if (event.target.id === "btn_action_revokeAccess")
       {
         const data = getRowData(event, dt_doctors);
         if (data)
-          updateListDoctorsRevokeRole(data.id, data.meta, user, dt_doctors, event.target);
+          updateListDoctorsRevokeRole(data.id, data.meta, user, dispatch, dt_doctors, event.target);
       }
     }
 
@@ -87,7 +89,8 @@ const Profile = () =>
                     setOpenTab: setOpenDoctors,
                     dt: dt_doctors
                   },
-                  user);
+                  user,
+                  dispatch);
               } }>
               Список врачей
             </Accordion.Header>
@@ -119,7 +122,8 @@ const Profile = () =>
                     setOpenTab: setOpenIlls,
                     dt: dt_ills
                   },
-                  user);
+                  user,
+                  dispatch);
 
 
               } }>

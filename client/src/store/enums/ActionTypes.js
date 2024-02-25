@@ -10,6 +10,8 @@ const ActionTypes =
     EXTRA_DATA: 'EXTRA_DATA',
     IS_AUTH: 'IS_AUTH',
     LOADING: 'LOADING',
+    NAME_WALLET: 'NAME_WALLET',
+    CLEAR_DATA: 'CLEAR_DATA'
 };
 
 export const ActionRegistration =

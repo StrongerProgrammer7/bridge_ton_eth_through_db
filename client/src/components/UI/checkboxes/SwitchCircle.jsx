@@ -1,13 +1,14 @@
 // @ts-nocheck
-import React , {useState, useContext} from 'react';
+import React , {useState } from 'react';
 
 import css from "./switchCircle.module.css";
-import { Context } from "../../../";
+
 import {connectMetamask} from './utils';
 import { memo } from 'react';
+import { useDispatch } from 'react-redux';
 
 
-function connectWalet(user,setIsRegistered,setSwitchOn=null,setName=null)
+function connectWalet(dispatch,setSwitchOn=null)
 {
   if(!window.ethereum)
   {
@@ -17,7 +18,7 @@ function connectWalet(user,setIsRegistered,setSwitchOn=null,setName=null)
   else
   {
     if(window.ethereum.isMetaMask)
-      connectMetamask(user,setIsRegistered,setSwitchOn,setName);
+      connectMetamask(dispatch,setSwitchOn);
     else
       console.log('Please install MetaMask!'); 
   }
@@ -26,15 +27,16 @@ function connectWalet(user,setIsRegistered,setSwitchOn=null,setName=null)
 
 const SwitchCircle = () => 
 {
-  const [connectedWallet,setSwitchOn] = useState(false);
-  const {setIsRegistered,user,setName} = useContext(Context);
-  connectWalet(user,setIsRegistered,setSwitchOn,setName);
+  const dispatch = useDispatch();
+  const [connectedWallet,setConnectedWallet] = useState(false);
+
+  connectWalet(dispatch,setConnectedWallet);
 
   return (
     <div className='d-flex'>
         <div className={css.navigationPanel_header__switch + ' mt-2 ml-2'}>
             <input type="checkbox" id="switch__buttonThree"  checked={connectedWallet} disabled={connectedWallet}  readOnly/>
-            <label onClick={() => connectWalet(user,setIsRegistered,setSwitchOn,setName)}><i></i>
+            <label onClick={() => connectWalet(dispatch,setConnectedWallet)}><i></i>
             </label>           
         </div>
         <label className={css.displayNone}>

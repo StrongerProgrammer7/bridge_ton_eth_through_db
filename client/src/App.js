@@ -13,39 +13,21 @@ import { Context } from './';
 
 function App() 
 {
-  const registration = useSelector(state => state.checkRegistrationDataReducer);
-
   const dispatch = useDispatch();
   const { setLoading } = useContext(Context);
-  // const [isAuth, setIsAuth] = useState(false);
-  // const [isLogIn, setLogIn] = useState(false);
-  // const [isRegistredDB, setIsRegisteredDB] = useState(false);
-  // const [isRegistredContract, setIsRegisteredContract] = useState(false);
-  // const [isRegistred, setIsRegistered] = useState(false);
-  // const [isLoading, setLoading] = useState(true);
-  // const [name, setName] = useState("Who");
-
-  // const user = new UserStore();
 
   useEffect(() =>
   {
     try 
     {
-      //setIsRegisteredDB((getLocalStorageItem('registration_db') && true) || false);
 
       dispatch(checkRegistrationControls.setRegisteredDB((getLocalStorageItem('registration_db') && true) || false));
-
-      //setIsRegisteredContract((getLocalStorageItem('registration_contract') && true) || false);
-
       dispatch(checkRegistrationControls.setRegisteredContract((getLocalStorageItem('registration_contract') && true) || false));
 
-      // setIsRegistered((getLocalStorageItem('registrationSuccess') && true) || false);
-
       dispatch(checkRegistrationControls.setRegistered((getLocalStorageItem('registrationSuccess') && true) || false));
-
-      // setIsAuth((getLocalStorageItem('isAuth') && true) || false);
       dispatch(UserControls.setAuth((getLocalStorageItem('isAuth') && true) || false));
-      setLoading(false);
+      dispatch(UserControls.setLoading(false));
+      //setLoading(false);
     } catch (error) 
     {
       console.log("Error with get data from localStorage");

@@ -1,17 +1,19 @@
 // @ts-nocheck
 
-import React,{useContext, useState} from 'react'
+import React,{ useState} from 'react'
 import { memo } from 'react';
 import Button from 'react-bootstrap/Button';
 import Form from 'react-bootstrap/Form';
 import Modal from 'react-bootstrap/Modal';
-import { Context } from '../../../../';
+import { useDispatch } from 'react-redux';
+
 import { signIn } from './utils';
 
 const PopupSignIn = (props) => 
 {
     const [password,setPassword] = useState('');
-    const { setLogIn } = useContext(Context);
+    const dispatch = useDispatch();
+
     return (
         <Modal show={props.show} onHide={props.handleClose}>
             <Modal.Header closeButton>
@@ -55,7 +57,7 @@ const PopupSignIn = (props) =>
             </Button>
             <Button variant="primary" onClick={e => 
             {
-                signIn({meta:props.wallet,pass:password,isDoctor:props.isDoctor},setLogIn);
+                signIn({meta:props.wallet,pass:password,isDoctor:props.isDoctor},dispatch);
                 props.handleClose(false);
             }}>
             Войти

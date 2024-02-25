@@ -2,16 +2,15 @@
 
 import { Outlet } from "react-router-dom";
 import css from "./navbar.module.css";
-import React,{memo, useContext,useState}  from 'react'
+import React,{memo }  from 'react'
 import Container from 'react-bootstrap/Container';
 import Nav from 'react-bootstrap/Nav';
 import Navbar from 'react-bootstrap/Navbar';
 
 import SwitchCircle from "../checkboxes/SwitchCircle";
 import { REGISTRATION_ROUTE,MAIN_ROUTE, PROFILEDOCTOR_ROUTER, PROFILE_ROUTE } from "../../../utils/consts";
-import { Context } from "../../../";
 import Spinner from 'react-bootstrap/Spinner';
-import { useEffect } from "react";
+import { useSelector } from "react-redux";
 
 
 //rfac
@@ -19,17 +18,10 @@ import { useEffect } from "react";
 
 const MyNavbar = ({title,title_mainPage,location,...props}) =>
 {
-    const { isRegistred,isLoading,isAuth,setIsAuth,isLogIn,user } = useContext(Context);
-
+    const user = useSelector(state => state.userReducer);
+    const isRegistredUser = useSelector(state => state.checkRegistrationDataReducer);
     
-    useEffect(()=>
-    {
-        if(isLogIn)
-            setIsAuth(true);
-    },[isLogIn])
-
-    
-    if(isLoading)
+    if(user.loading)
     {
         return(
             <Spinner animation="border" role="status">
@@ -50,13 +42,13 @@ const MyNavbar = ({title,title_mainPage,location,...props}) =>
                     {curentPath !== MAIN_ROUTE ? 
                     <Nav.Link href={MAIN_ROUTE} className={css.hoverLink}>{title_mainPage}</Nav.Link> 
                     : 
-                    isAuth === true ?
-                    <Nav.Link href={ user.user.isDoctor ? PROFILEDOCTOR_ROUTER : PROFILE_ROUTE} 
+                    user.isAuth === true ?
+                    <Nav.Link href={ user.personalInfo.isDoctor ? PROFILEDOCTOR_ROUTER : PROFILE_ROUTE} 
                     className={css.hoverLink}>
                         Профиль</Nav.Link> 
                             : null
                     }
-                    { isRegistred === true ?    
+                    { isRegistredUser.isRegistered === true ?    
                         props.children
                         :
                         curentPath !== REGISTRATION_ROUTE ? 
