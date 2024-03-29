@@ -1,0 +1,75 @@
+.background
+{
+    background: url('./image/reg.jpg');
+    background-size: cover;
+}
+
+.warning
+{
+  margin-bottom: -0.5em;
+  font-size: 0.7em;
+}
+
+.name
+{
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+#information
+{
+    display: flex;
+    flex-flow: row nowrap;
+}
+
+.accountUsers
+{
+    padding-left: 10px;
+}
+#account
+{
+    padding-top: 3px;
+}
+
+
+.btn_info
+{
+  margin-bottom: 20px;
+  margin-top: 15px;
+}
+input,select,option
+{
+  text-align: center;
+}
+
+.pass
+{
+  width: 48%;
+}
+
+.form_check
+{
+  display: flex!important;
+  justify-content: center;
+  background-color: #0d6dfd5e;
+  border: 1px solid #0d6dfd5e;
+  border-radius: 25px;
+  width: 50%;
+}
+
+.form_check_label
+{
+  margin-left: 5px;
+  color:white;
+}
+
+.form__check_doctor_div
+{
+  display: flex;
+  justify-content: center;
+}
+
+#form label
+{
+  font-weight: bold;
+}

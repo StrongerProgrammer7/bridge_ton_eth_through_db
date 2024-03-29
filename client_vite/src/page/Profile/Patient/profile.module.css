@@ -1,0 +1,157 @@
+
+
+
+
+
+
+.main
+{
+    display: flex;
+    flex-wrap: wrap;
+    flex-direction:row-reverse;
+    margin:15px;
+    margin-top: 80px;
+    
+}
+
+.options_data
+{
+  max-width: 30%;
+  width: 100%; 
+  margin-top: 15px;
+}
+
+.form
+{
+    display: flex;
+    flex-wrap: wrap;
+    flex-direction: column;
+}
+
+.form button
+{
+  color:wheat;
+  transition: all 0.2s ease-out;
+}
+.form button:hover
+{
+  color:wheat;
+  font-size: 1.1rem;
+}
+.btn-sub
+{
+    margin:0 auto;
+    max-width: 300px;
+}
+
+.dataset
+{
+  max-width: 65%;
+  margin:0 auto;
+  width: 100%;
+}
+
+.filter_by_option
+{
+  margin-left: 5px;
+  font-size: 0.8rem;
+}
+.professions_chx input[type="checkbox"]
+{
+  cursor: pointer;
+}
+.dropdown-menu
+{
+  width: 250px;
+}
+.dropdown-menu p
+{
+  margin-bottom: 0;
+}
+
+.btn-close
+{
+  width: 0.2em!important;
+  height: 0.2em!important;
+  padding-top: 10px!important;
+}
+
+.btn-access
+{
+  font-size: 0.8rem!important;
+}
+
+.btn-personalData
+{
+  color:white;
+}
+
+.modal-footer
+{
+  justify-content: space-between!important;
+}
+
+
+/* #table_doctors #table_patients
+{
+  width: 100%!important;
+} */
+
+.profession
+{
+  margin-bottom: 0!important;
+}
+
+/* .dtsp-columns-2, .dtsp-columns-1
+{
+  max-width: 30%!important;
+  min-width: 15%!important;
+  font-size: 0.8rem !important;
+} */
+/* .dtsp-paneButton
+{
+  height: 20px;
+}
+
+#table_doctors_length select, #table_ills_length select, #table_actual_ills_length select, #table_patients_length select
+{
+  width: 50%!important;
+}
+#table_actual_ills_filter input
+{
+  width: 50%;
+}
+.dataTables_wrapper, .dataTables_paginate ,.paginate_button, .dataTables_wrapper .dataTables_paginate .paginate_button:hover
+{
+  /* background: rgba(255, 255, 255, 0)!important;
+  border: 0 !important; 
+  padding: 0!important;
+  margin: 0!important;
+} */
+
+.hide_columns 
+{
+  display: none;
+}
+.dtsp-title
+{
+  font-weight: bold!important;
+}
+
+.red_color_text
+{
+  color: red !important;;
+}
+
+#btn_setDiagnosis
+{
+  color: white;
+}
+
+.wrapper
+{
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  justify-content: space-between;
+}

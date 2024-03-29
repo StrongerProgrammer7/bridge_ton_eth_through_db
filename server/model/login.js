@@ -13,6 +13,7 @@ const login = async (req, res, next) =>
             pass,
             isDoctor
         } = req.body;
+    console.log(req.body);
     if (meta === undefined || meta === '' || pass === undefined || pass === '')
     {
         return next(ApiError.badRequest('Error: Not correct input data'));
