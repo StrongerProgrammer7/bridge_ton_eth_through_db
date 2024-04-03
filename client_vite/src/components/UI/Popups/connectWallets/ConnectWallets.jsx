@@ -10,6 +10,7 @@ import metamask from "./images/MetaMask_Fox.svg.png";
 import css from "./connectwallet.module.css";
 import { connectMetamask } from './utils';
 import { UserControls } from '../../../../models/user';
+import useTonContract from '../../../../hooks/useTonContract';
 
 
 function connectWalet(dispatch)
@@ -31,6 +32,7 @@ const ConnectWallets = () =>
 {
     const dispatch = useDispatch();
     const { network, wallet, connected } = useTonConnect();
+    const contract = useTonContract();
     const [show, setShow] = useState(false);
 
     const handleClose = () => setShow(false);
@@ -49,7 +51,16 @@ const ConnectWallets = () =>
             return;
         dispatch(UserControls.setAccountWallet(wallet));
         dispatch(UserControls.setNameWallet("TON"));
+
     }, [connected, network, wallet]);
+
+    useEffect(() =>
+    {
+        console.log("try connect contract TON", contract);
+        if (!contract.contract_patients)
+            return;
+        dispatch(UserControls.setContract(contract.contract_patients));
+    }, [contract.contract_patients]);
     return (
         <>
             <Button variant="light" onClick={ handleShow }>

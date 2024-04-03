@@ -1,0 +1,139 @@
+#pragma version =0.4.3;
+#pragma allow-post-modification;
+#pragma compute-asm-ltr;
+
+#include "tact_Patients.headers.fc";
+#include "tact_Patients.stdlib.fc";
+#include "tact_Patients.storage.fc";
+
+;;
+;; Contract Patients functions
+;;
+
+(int) $Patients$_contract_init() impure inline_ref {
+    var (($self'countPatients)) = (0);
+    return ($self'countPatients);
+}
+
+((int), slice) $Patients$_fun_ContractPatient((int) $self, slice $owner) impure inline_ref {
+    var (($self'countPatients)) = $self;
+    var ($init'code, $init'data) = $Patient$_init_child(__tact_context_sys, my_address(), $owner);
+    return (($self'countPatients), $global_contractAddress(($init'code, $init'data)));
+}
+
+((int), int) $Patients$_fun_countPatients((int) $self) impure inline_ref {
+    var (($self'countPatients)) = $self;
+    return (($self'countPatients), $self'countPatients);
+}
+
+;;
+;; Receivers of a Contract Patients
+;;
+
+(((int)), ()) $Patients$_internal_binary_Registration((int) $self, (int) $msg) impure inline {
+    var ($self'countPatients) = $self;
+    var ($msg'id) = $msg;
+    $self'countPatients = ($self'countPatients + 1);
+    var ($init'code, $init'data) = $Patient$_init_child(__tact_context_sys, my_address(), __tact_context_get_sender());
+    $global_send($SendParameters$_constructor_to_body_value_mode_code_data($global_contractAddress(($init'code, $init'data)), $Registration$_store_cell($Registration$_constructor_id($msg'id)), 300000000, 2, $init'code, $init'data));
+    ($self'countPatients)~$Patients$_fun_reply($NewPatientRegistration$_store_cell($NewPatientRegistration$_constructor_count_address($self'countPatients, $global_contractAddress(($init'code, $init'data)))));
+    return (($self'countPatients), ());
+}
+
+(((int)), ()) $Patients$_internal_binary_Deploy((int) $self, (int) $deploy) impure inline {
+    var ($self'countPatients) = $self;
+    var ($deploy'queryId) = $deploy;
+    ($self'countPatients)~$Patients$_fun_notify($DeployOk$_store_cell($DeployOk$_constructor_queryId($deploy'queryId)));
+    return (($self'countPatients), ());
+}
+
+;;
+;; Get methods of a Contract Patients
+;;
+
+_ %ContractPatient(slice $$owner) method_id(90888) {
+    slice $owner = __tact_verify_address($$owner);
+    var self = $Patients$_contract_load();
+    var res = self~$Patients$_fun_ContractPatient($owner);
+    return res;
+}
+
+_ %countPatients() method_id(111171) {
+    var self = $Patients$_contract_load();
+    var res = self~$Patients$_fun_countPatients();
+    return res;
+}
+
+_ supported_interfaces() method_id {
+    return (
+        "org.ton.introspection.v0"H >> 128,
+        "org.ton.abi.ipfs.v0"H >> 128,
+        "org.ton.deploy.lazy.v0"H >> 128,
+        "org.ton.chain.workchain.v0"H >> 128
+    );
+}
+
+_ get_abi_ipfs() method_id {
+    return "ipfs://QmdFQenaTyYQNr4WTiZFU2fbgf7QKedtjtHNUJg1nbsRpn";
+}
+
+_ lazy_deployment_completed() method_id {
+    return get_data().begin_parse().load_int(1);
+}
+
+;;
+;; Routing of a Contract Patients
+;;
+
+((int), int) $Patients$_contract_router_internal((int) self, int msg_bounced, slice in_msg) impure inline_ref {
+    ;; Handle bounced messages
+    if (msg_bounced) {
+        return (self, true);
+    }
+    
+    ;; Parse incoming message
+    int op = 0;
+    if (slice_bits(in_msg) >= 32) {
+        op = in_msg.preload_uint(32);
+    }
+    
+    
+    ;; Receive Registration message
+    if (op == 320965295) {
+        var msg = in_msg~$Registration$_load();
+        self~$Patients$_internal_binary_Registration(msg);
+        return (self, true);
+    }
+    
+    ;; Receive Deploy message
+    if (op == 2490013878) {
+        var msg = in_msg~$Deploy$_load();
+        self~$Patients$_internal_binary_Deploy(msg);
+        return (self, true);
+    }
+    
+    return (self, false);
+}
+
+() recv_internal(int msg_value, cell in_msg_cell, slice in_msg) impure {
+    
+    ;; Context
+    var cs = in_msg_cell.begin_parse();
+    var msg_flags = cs~load_uint(4);
+    var msg_bounced = -(msg_flags & 1);
+    slice msg_sender_addr = __tact_verify_address(cs~load_msg_addr());
+    __tact_context = (msg_bounced, msg_sender_addr, msg_value, cs);
+    __tact_context_sender = msg_sender_addr;
+    
+    ;; Load contract data
+    var self = $Patients$_contract_load();
+    
+    ;; Handle operation
+    int handled = self~$Patients$_contract_router_internal(msg_bounced, in_msg);
+    
+    ;; Throw if not handled
+    throw_unless(130, handled);
+    
+    ;; Persist state
+    $Patients$_contract_store(self);
+}

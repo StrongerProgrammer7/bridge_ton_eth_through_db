@@ -1,6 +1,6 @@
 // @ts-nocheck
 
-import * as abi from '../../../../http/ABIandAddress';
+import * as abi from '../../../../http/getDataAboutContracts';
 import { getData } from '../../../../http/getDataAPI';
 import { checkRegistrationControls } from '../../../../models/checkIsRegistered';
 import { UserControls } from '../../../../models/user';
@@ -56,7 +56,7 @@ export const connectMetamask = async (dispatch) =>
 
 const connectContract = async (web3, dispatch) =>
 {
-  const dataOfContract = await abi.getDataOfContract();
+  const dataOfContract = await abi.getDataOfContractEth();
   if (!dataOfContract)
   {
     console.error("Don't get data for contract (ABI and address ");

@@ -1,0 +1,169 @@
+;;
+;; Type: StateInit
+;; TLB: _ code:^cell data:^cell = StateInit
+;;
+
+((cell, cell)) $StateInit$_not_null(tuple v) inline {
+    throw_if(128, null?(v));
+    var (cell vvv'code, cell vvv'data) = __tact_tuple_destroy_2(v);
+    return (vvv'code, vvv'data);
+}
+
+;;
+;; Type: SendParameters
+;; TLB: _ bounce:bool to:address value:int257 mode:int257 body:Maybe ^cell code:Maybe ^cell data:Maybe ^cell = SendParameters
+;;
+
+((int, slice, int, int, cell, cell, cell)) $SendParameters$_constructor_bounce_to_value_mode_body_code_data(int bounce, slice to, int value, int mode, cell body, cell code, cell data) inline {
+    return (bounce, to, value, mode, body, code, data);
+}
+
+((int, slice, int, int, cell, cell, cell)) $SendParameters$_constructor_to_body_value_mode_code_data(slice to, cell body, int value, int mode, cell code, cell data) inline {
+    return (true, to, value, mode, body, code, data);
+}
+
+;;
+;; Type: Deploy
+;; Header: 0x946a98b6
+;; TLB: deploy#946a98b6 queryId:uint64 = Deploy
+;;
+
+(slice, ((int))) $Deploy$_load(slice sc_0) inline {
+    throw_unless(129, sc_0~load_uint(32) == 2490013878);
+    var v'queryId = sc_0~load_uint(64);
+    return (sc_0, (v'queryId));
+}
+
+;;
+;; Type: DeployOk
+;; Header: 0xaff90f57
+;; TLB: deploy_ok#aff90f57 queryId:uint64 = DeployOk
+;;
+
+builder $DeployOk$_store(builder build_0, (int) v) inline {
+    var (v'queryId) = v;
+    build_0 = store_uint(build_0, 2952335191, 32);
+    build_0 = build_0.store_uint(v'queryId, 64);
+    return build_0;
+}
+
+cell $DeployOk$_store_cell((int) v) inline {
+    return $DeployOk$_store(begin_cell(), v).end_cell();
+}
+
+((int)) $DeployOk$_constructor_queryId(int queryId) inline {
+    return (queryId);
+}
+
+;;
+;; Type: Registration
+;; Header: 0x13218aaf
+;; TLB: registration#13218aaf id:uint256 = Registration
+;;
+
+builder $Registration$_store(builder build_0, (int) v) inline {
+    var (v'id) = v;
+    build_0 = store_uint(build_0, 320965295, 32);
+    build_0 = build_0.store_uint(v'id, 256);
+    return build_0;
+}
+
+cell $Registration$_store_cell((int) v) inline {
+    return $Registration$_store(begin_cell(), v).end_cell();
+}
+
+(slice, ((int))) $Registration$_load(slice sc_0) inline {
+    throw_unless(129, sc_0~load_uint(32) == 320965295);
+    var v'id = sc_0~load_uint(256);
+    return (sc_0, (v'id));
+}
+
+((int)) $Registration$_constructor_id(int id) inline {
+    return (id);
+}
+
+;;
+;; Type: NewPatientRegistration
+;; Header: 0x6fb3ff04
+;; TLB: new_patient_registration#6fb3ff04 count:uint256 address:address = NewPatientRegistration
+;;
+
+builder $NewPatientRegistration$_store(builder build_0, (int, slice) v) inline {
+    var (v'count, v'address) = v;
+    build_0 = store_uint(build_0, 1874067204, 32);
+    build_0 = build_0.store_uint(v'count, 256);
+    build_0 = __tact_store_address(build_0, v'address);
+    return build_0;
+}
+
+cell $NewPatientRegistration$_store_cell((int, slice) v) inline {
+    return $NewPatientRegistration$_store(begin_cell(), v).end_cell();
+}
+
+((int, slice)) $NewPatientRegistration$_constructor_count_address(int count, slice address) inline {
+    return (count, address);
+}
+
+;;
+;; Type: Patient
+;;
+
+builder $Patient$init$_store(builder build_0, (slice, slice) v) inline {
+    var (v'parent, v'owner) = v;
+    build_0 = __tact_store_address(build_0, v'parent);
+    build_0 = __tact_store_address(build_0, v'owner);
+    return build_0;
+}
+
+(cell, cell) $Patient$_init_child(cell sys', slice $parent, slice $owner) inline_ref {
+    slice sc' = sys'.begin_parse();
+    cell source = sc'~load_dict();
+    cell contracts = new_dict();
+    
+    ;; Contract Code: Patient
+    cell mine = __tact_dict_get_code(source, 43175);
+    contracts = __tact_dict_set_code(contracts, 43175, mine);
+    
+    ;; Build cell
+    builder b = begin_cell();
+    b = b.store_ref(begin_cell().store_dict(contracts).end_cell());
+    b = b.store_int(false, 1);
+    b = $Patient$init$_store(b, ($parent, $owner));
+    return (mine, b.end_cell());
+}
+
+;;
+;; Type: Patients
+;;
+
+builder $Patients$_store(builder build_0, (int) v) inline {
+    var (v'countPatients) = v;
+    build_0 = build_0.store_uint(v'countPatients, 256);
+    return build_0;
+}
+
+(slice, ((int))) $Patients$_load(slice sc_0) inline {
+    var v'countPatients = sc_0~load_uint(256);
+    return (sc_0, (v'countPatients));
+}
+
+(int) $Patients$_contract_load() impure inline_ref {
+    slice $sc = get_data().begin_parse();
+    __tact_context_sys = $sc~load_ref();
+    int $loaded = $sc~load_int(1);
+    if ($loaded) {
+        return $sc~$Patients$_load();
+    } else {
+        ;; Allow only workchain deployments
+        throw_unless(137, my_address().preload_uint(11) == 1024);
+        return $Patients$_contract_init();
+    }
+}
+
+() $Patients$_contract_store((int) v) impure inline {
+    builder b = begin_cell();
+    b = b.store_ref(__tact_context_sys);
+    b = b.store_int(true, 1);
+    b = $Patients$_store(b, v);
+    set_data(b.end_cell());
+}
