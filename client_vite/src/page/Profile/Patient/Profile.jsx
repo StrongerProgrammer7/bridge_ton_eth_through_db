@@ -46,11 +46,11 @@ const Profile = () =>
       {
         const data = getRowData(event, dt_doctors);
         if (data)
-          updateListDoctorsGiveRole(data.id, data.meta, user, dispatch, dt_doctors, event.target);
+          updateListDoctorsGiveRole(data.id, data.meta, user, dispatch, dt_doctors, event.target); //TODO запись в ТОН Адресс
       }
       if (event.target.id === "btn_action_revokeAccess")
       {
-        const data = getRowData(event, dt_doctors);
+        const data = getRowData(event, dt_doctors); //TODO удалить из ТОН Адресс
         if (data)
           updateListDoctorsRevokeRole(data.id, data.meta, user, dispatch, dt_doctors, event.target);
       }
@@ -58,29 +58,29 @@ const Profile = () =>
 
     function recalcTables()
     {
-        if (dt_ills && tableIllsRef.current)
-        {
-          //dt_ills.columns.adjust().draw(); 
-         // dt_ills.columns?.adjust().draw();
-          dt_ills.responsive?.recalc();
-          dt_ills.columns?.adjust().responsive.recalc();
-        }
-        if (dt_doctors && tableDoctorsRef.current)
-        {
-          //dt_doctors.columns?.adjust().draw();
-          dt_doctors.responsive?.recalc();
-          dt_doctors.columns?.adjust().responsive.recalc();
-        }
-        if (dt_actualIlls && tableActualIllsRef.current)
-        {
-         // dt_actualIlls.columns?.adjust().draw();
-          dt_actualIlls.responsive?.recalc();
-          dt_actualIlls.columns?.adjust().responsive.recalc();
-        }
+      if (dt_ills && tableIllsRef.current)
+      {
+        //dt_ills.columns.adjust().draw(); 
+        // dt_ills.columns?.adjust().draw();
+        dt_ills.responsive?.recalc();
+        dt_ills.columns?.adjust().responsive.recalc();
+      }
+      if (dt_doctors && tableDoctorsRef.current)
+      {
+        //dt_doctors.columns?.adjust().draw();
+        dt_doctors.responsive?.recalc();
+        dt_doctors.columns?.adjust().responsive.recalc();
+      }
+      if (dt_actualIlls && tableActualIllsRef.current)
+      {
+        // dt_actualIlls.columns?.adjust().draw();
+        dt_actualIlls.responsive?.recalc();
+        dt_actualIlls.columns?.adjust().responsive.recalc();
+      }
     }
 
     document.addEventListener("click", handleClick);
-    document.addEventListener('resize', recalcTables); 
+    document.addEventListener('resize', recalcTables);
 
     return () =>
     {

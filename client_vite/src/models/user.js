@@ -4,7 +4,7 @@ import { setWhoIs, pushList, removeElemFromList, addExtraDataPersonalInfo, clear
 
 const initialState =
 {
-    accountWallet: '',
+    accountWallet: undefined,
     personalInfo:
     {
         name: "",

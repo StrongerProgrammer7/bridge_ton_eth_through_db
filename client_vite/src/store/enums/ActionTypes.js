@@ -22,4 +22,18 @@ export const ActionRegistration =
     IS_REGISTRATION: 'IS_REGISTRATION',
 }
 
+export const NameWallet =
+{
+    TON: "TON",
+    ETH: "ETH"
+}
+
+export const MessageForTON =
+{
+    REGISTRAION: "Registration",
+    REMOVE_ADDRESS: "Remove",
+    ADD_ADDRESS: "Push",
+
+}
+
 export default ActionTypes;

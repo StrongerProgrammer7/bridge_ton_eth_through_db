@@ -4,6 +4,7 @@ import * as abi from '../../../../http/getDataAboutContracts';
 import { getData } from '../../../../http/getDataAPI';
 import { checkRegistrationControls } from '../../../../models/checkIsRegistered';
 import { UserControls } from '../../../../models/user';
+import { NameWallet } from '../../../../store/enums/ActionTypes';
 import { removeLocalStorageItem, setLocalStorageItem, getWeb3, getAccountsEth, connectContractETH } from '../../../../utils/helper';
 
 
@@ -74,6 +75,6 @@ const connectContract = async (web3, dispatch) =>
   const contract = await connectContractETH(web3, data.abi, data.address);
   window.contract = contract;
   dispatch(UserControls.setContract(contract));
-  dispatch(UserControls.setNameWallet('ETH'));
+  dispatch(UserControls.setNameWallet(NameWallet.ETH));
 
 }

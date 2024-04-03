@@ -11,22 +11,17 @@ import css from "./connectwallet.module.css";
 import { connectMetamask } from './utils';
 import { UserControls } from '../../../../models/user';
 import useTonContract from '../../../../hooks/useTonContract';
+import { NameWallet } from '../../../../store/enums/ActionTypes';
 
 
 function connectWalet(dispatch)
 {
-    if (!window.ethereum)
+    if (!window.ethereum || !window.ethereum.isMetaMask)
     {
-        //console.warn('No web3 detected or metamask! Falling back to http://localhost:8545.');
-        console.log('You are using other wallet');
+        console.warn('You are using other wallet or don"t install MetaMask!');
+        return;
     }
-    else
-    {
-        if (window.ethereum.isMetaMask)
-            connectMetamask(dispatch);
-        else
-            console.log('Please install MetaMask!');
-    }
+    connectMetamask(dispatch);
 }
 const ConnectWallets = () => 
 {
@@ -50,7 +45,7 @@ const ConnectWallets = () =>
         if (!connected)
             return;
         dispatch(UserControls.setAccountWallet(wallet));
-        dispatch(UserControls.setNameWallet("TON"));
+        dispatch(UserControls.setNameWallet(NameWallet.TON));
 
     }, [connected, network, wallet]);
 
