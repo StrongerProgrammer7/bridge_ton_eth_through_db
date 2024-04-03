@@ -1,0 +1,4 @@
+ tc-root button:hover
+{
+   transform: scale(1.1) !important;
+} 

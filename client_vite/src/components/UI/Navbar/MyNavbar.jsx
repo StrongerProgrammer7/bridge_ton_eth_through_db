@@ -39,19 +39,19 @@ const MyNavbar = ({title,title_mainPage,location,...props}) =>
                 <Navbar.Toggle aria-controls="basic-navbar-nav" />
                 <Navbar.Collapse id="basic-navbar-nav" >
                 <Nav className="justify-content-end align-items-center flex-grow-1 me-auto">
-                    {curentPath !== MAIN_ROUTE ? 
-                    <Nav.Link href={MAIN_ROUTE} className={css.hoverLink}>{title_mainPage}</Nav.Link> 
-                    : 
-                    user.isAuth === true ?
+                            { curentPath !== MAIN_ROUTE &&
+                                <Nav.Link href={ MAIN_ROUTE } className={ css.hoverLink }>{ title_mainPage }</Nav.Link>
+                            }
+                    {
+                    user.isAuth === true &&
                     <Nav.Link href={ user.personalInfo.isDoctor ? PROFILEDOCTOR_ROUTER : PROFILE_ROUTE} 
                     className={css.hoverLink}>
-                        Профиль</Nav.Link> 
-                            : null
+                        Профиль</Nav.Link>       
                     }
                     { isRegistredUser.isRegistered === true ?    
                         props.children
                         :
-                        curentPath !== REGISTRATION_ROUTE ? 
+                                curentPath !== REGISTRATION_ROUTE && user.accountWallet !== '' && user.web3Connect && user.contract ? 
                         <Nav.Link href="/registration" className={css.hoverLink}>Зарегистрироваться</Nav.Link> : null
                         
                     }

@@ -2,11 +2,10 @@
 
 .hoverLink
 {
-	color: rgba(248,249,250);
-	transition: color 0.5s ease;
+	color: white !important;
+	transition: color 0.3s linear !important;
 }
 .hoverLink:hover
 {
-	color:rgb(67, 231, 206);
-	transition: color 0.5s ease;
+	color:rgb(42, 235, 206) !important;
 }

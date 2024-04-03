@@ -13,7 +13,7 @@ const initialState =
         nameWallet: '',
         id: undefined
     },
-    contract: '',
+    contract: undefined,
     listDoctorsAccess: [],
     web3Connect: undefined,
     isAuth: false,

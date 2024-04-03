@@ -4,7 +4,7 @@ import { getWeb3, getAccountsEth } from "../utils/helper";
 
 export function useEthConnectAccount()
 {
-    const [eth, setEth] = useState({ web3: undefined, account: '' });
+    const [eth, setEth] = useState({ web3: undefined, account: undefined });
 
     useEffect(() =>
     {
@@ -20,7 +20,7 @@ export function useEthConnectAccount()
             }
             setEth({ web3: web3, account: accounts[0] });
         }
-        if (!eth.web3 || account === '')
+        if (!eth.web3 || !eth.account)
             getAccountAndWeb3();
     }, [])
 
