@@ -11,7 +11,8 @@ const ActionTypes =
     IS_AUTH: 'IS_AUTH',
     LOADING: 'LOADING',
     NAME_WALLET: 'NAME_WALLET',
-    CLEAR_DATA: 'CLEAR_DATA'
+    CLEAR_DATA: 'CLEAR_DATA',
+    WEB3_CONNECT: 'WEB3_CONNECT'
 };
 
 export const ActionRegistration =

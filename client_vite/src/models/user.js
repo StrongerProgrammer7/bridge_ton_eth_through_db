@@ -15,6 +15,7 @@ const initialState =
     },
     contract: '',
     listDoctorsAccess: [],
+    web3Connect: undefined,
     isAuth: false,
     loading: true,
 }
@@ -42,6 +43,8 @@ export function userReducer(state = initialState, action)
             return { ...state, isAuth: action.payload };
         case ActionTypes.NAME_WALLET:
             return { ...state, personalInfo: { ...state.personalInfo, nameWallet: action.payload } };
+        case ActionTypes.WEB3_CONNECT:
+            return { ...state, web3Connect: action.payload };
         case ActionTypes.LOADING:
             return { ...state, loading: action.payload };
         case ActionTypes.CLEAR_DATA:
@@ -84,6 +87,10 @@ export const UserControls =
     }),
     setAuth: (value) => ({
         type: ActionTypes.IS_AUTH,
+        payload: value
+    }),
+    setWeb3Connect: (value) => ({
+        type: ActionTypes.WEB3_CONNECT,
         payload: value
     }),
     setNameWallet: (value) => ({
