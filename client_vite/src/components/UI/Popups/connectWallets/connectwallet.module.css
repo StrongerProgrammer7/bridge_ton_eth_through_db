@@ -33,3 +33,8 @@
     font-size: 18px;
     color: white;
 }
+
+.zindex1
+{
+    z-index: 1 !important;
+}

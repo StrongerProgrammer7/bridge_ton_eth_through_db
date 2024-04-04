@@ -5,10 +5,11 @@ import AppRouter from "./components/AppRouter";
 import Navbar from "./components/Navbar";
 import Footer from "./components/Footer/Footer";
 import { getLocalStorageItem } from './utils/helper';
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch } from 'react-redux';
 import { checkRegistrationControls } from './models/checkIsRegistered';
 import { UserControls } from './models/user';
 import { Context } from './main';
+import { keyLocalStorage } from './store/enums/WorkWithWallet';
 
 
 function App() 
@@ -21,11 +22,11 @@ function App()
     try 
     {
 
-      dispatch(checkRegistrationControls.setRegisteredDB((getLocalStorageItem('registration_db') && true) || false));
-      dispatch(checkRegistrationControls.setRegisteredContract((getLocalStorageItem('registration_contract') && true) || false));
+      dispatch(checkRegistrationControls.setRegisteredDB((getLocalStorageItem(keyLocalStorage.REGISTRATION_DB_SUCCESS) && true) || false));
+      dispatch(checkRegistrationControls.setRegisteredContract((getLocalStorageItem(keyLocalStorage.REGISTRATION_CONTRACT_SUCCESS) && true) || false));
 
-      dispatch(checkRegistrationControls.setRegistered((getLocalStorageItem('registrationSuccess') && true) || false));
-      dispatch(UserControls.setAuth((getLocalStorageItem('isAuth') && true) || false));
+      dispatch(checkRegistrationControls.setRegistered((getLocalStorageItem(keyLocalStorage.REGISTRATION_SUCCESS) && true) || false));
+      dispatch(UserControls.setAuth((getLocalStorageItem(keyLocalStorage.AUTH) && true) || false));
       dispatch(UserControls.setLoading(false));
       //setLoading(false);
     } catch (error) 

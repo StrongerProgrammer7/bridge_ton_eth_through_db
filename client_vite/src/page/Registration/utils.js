@@ -4,7 +4,7 @@ import { WalletContractV4 } from '@ton/ton';
 import { mnemonicToWalletKey } from 'ton-crypto';
 import { Address, toNano } from "@ton/core";
 import { checkRegistrationControls } from "../../models/checkIsRegistered";
-import { MessageForTON, NameWallet } from "../../store/enums/ActionTypes";
+import { MessageForTON, NameWallet } from "../../store/enums/WorkWithWallet";
 export function optionCities(element)
 {
     return `${ element.region }:${ element.city }`
@@ -121,7 +121,6 @@ export async function registrationContractEthAndInDatabase(data, user, dispatch)
         .then(async (receipt) =>
         {
             dispatch(checkRegistrationControls.setRegisteredContract(true));
-            //registration_data.setIsRegisteredContract(true);
             console.log(receipt);
             return await user.contract.getPastEvents("NewPatient",
                 {

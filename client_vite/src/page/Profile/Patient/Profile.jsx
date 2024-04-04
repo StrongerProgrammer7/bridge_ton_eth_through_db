@@ -87,7 +87,7 @@ const Profile = () =>
       document.removeEventListener("click", handleClick);
       document.removeEventListener('resize', recalcTables);
     };
-  }, [tableDoctorsRef, dt_doctors, user]);
+  }, [/*tableDoctorsRef, dt_doctors, user*/]);
 
   return (
     <main className={ css.main }>

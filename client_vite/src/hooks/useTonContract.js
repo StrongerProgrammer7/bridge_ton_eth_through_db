@@ -28,5 +28,5 @@ const useTonContract = () =>
         contract_address_patients: contract_patients?.address.toString()
     }
 }
-//getDataOfContractTon
+
 export default useTonContract;

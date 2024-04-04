@@ -10,7 +10,7 @@ const initialState =
         name: "",
         isDoctor: false,
         isPatient: false,
-        nameWallet: '',
+        nameWallet: undefined,
         id: undefined
     },
     contract: undefined,

@@ -2,3 +2,8 @@
 {
    transform: scale(1.1) !important;
 } 
+
+.modal-backdrop
+{
+   z-index: 1 !important;
+}

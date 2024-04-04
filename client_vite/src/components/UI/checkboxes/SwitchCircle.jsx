@@ -12,8 +12,9 @@ const SwitchCircle = () =>
   {
     console.log("try connect with wallet");
     if (!user.accountWallet)
-      return;
-    setConnectedWallet(true);
+      setConnectedWallet(false);
+    else
+      setConnectedWallet(true);
   }, [user.accountWallet])
 
   return (

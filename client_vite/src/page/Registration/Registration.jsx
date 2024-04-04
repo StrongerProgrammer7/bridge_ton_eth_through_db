@@ -11,7 +11,7 @@ import css from './registration.module.css';
 import { setLocalStorageItem } from "../../utils/helper";
 import { useDispatch, useSelector } from "react-redux";
 import { checkRegistrationControls } from "../../models/checkIsRegistered";
-import { NameWallet } from "../../store/enums/ActionTypes";
+import { keyLocalStorage, NameWallet } from "../../store/enums/WorkWithWallet";
 import { Address } from "@ton/core";
 import useTonClient from "../../hooks/useTonClient";
 import { useTonConnect } from "../../hooks/useTonConnect";
@@ -153,14 +153,14 @@ const Registration = () =>
 
 
             if (isRegisteredUser.isRegisteredDB)
-                setLocalStorageItem('registration_db', isRegisteredUser.isRegisteredDB);
+                setLocalStorageItem(keyLocalStorage.REGISTRATION_DB_SUCCESS, isRegisteredUser.isRegisteredDB);
             if (isRegisteredUser.isRegisteredContract)
-                setLocalStorageItem('registration_contract', isRegisteredUser.isRegisteredContract);
+                setLocalStorageItem(keyLocalStorage.REGISTRATION_CONTRACT_SUCCESS, isRegisteredUser.isRegisteredContract);
             if (isRegisteredUser.isRegisteredDB && isRegisteredUser.isRegisteredContract)
             {
                 dispatch(checkRegistrationControls.setRegistered(true));
                 //registration_data.setIsRegistered(true);
-                setLocalStorageItem('registrationSuccess', true);
+                setLocalStorageItem(keyLocalStorage.REGISTRATION_SUCCESS, true);
             }
             setSuccessRegistration({ status: true, message: response.data.success });
             setTimeout(() =>

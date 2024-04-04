@@ -98,6 +98,7 @@ export function openTab(isOpenCurrentTab, getListDataCallback, dataTable, user, 
 
     setDatatablesValues(result, dataTable.setDT);
     dataTable.setOpenTab(true);
+    recalcTable(dataTable.dt, 800);
   } else
   {
     if (dataTable.dt)
