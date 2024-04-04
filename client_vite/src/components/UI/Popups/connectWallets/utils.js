@@ -110,13 +110,13 @@ export async function disconnectMetatmask()
 
 }
 
-export function disconnectWallet(dispatch, wallet)
+export function disconnectWallet(dispatch)
 {
   dispatch(UserControls.setAccountWallet(undefined));
-  dispatch(UserControls.setNameWallet(undefined));
+  dispatch(UserControls.clearData());
   dispatch(UserControls.setContract(undefined));
   dispatch(UserControls.setWeb3Connect(undefined));
   removeLocalStorageItem(keyLocalStorage.REGISTRATION_SUCCESS);
   removeLocalStorageItem(keyLocalStorage.AUTH);
-  isExistsPatientOrDoctor(dispatch, wallet);
+  isExistsPatientOrDoctor(dispatch, '');
 }

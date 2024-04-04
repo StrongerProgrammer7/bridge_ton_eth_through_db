@@ -1,28 +1,22 @@
 // @ts-nocheck
 import { useEffect, useState } from "react";
-import { getWeb3, getAccountsEth } from "../utils/helper";
+import { getWeb3 } from "../utils/helper";
 
-export function useEthConnectAccount()
+export function useEthConnect()
 {
-    const [eth, setEth] = useState({ web3: undefined, account: undefined });
+    const [web3, setWeb3] = useState();
 
     useEffect(() =>
     {
-        async function getAccountAndWeb3()
+        async function getConnectWeb3()
         {
             const web3 = await getWeb3();
-            const accounts = await getAccountsEth(web3);
 
-            if (!accounts || (accounts && accounts.length === 0))
-            {
-                console.log("Not connect with wallet or You have not wallet-account!");
-                return;
-            }
-            setEth({ web3: web3, account: accounts[0] });
+            setWeb3(web3);
         }
-        if (!eth.web3 || !eth.account)
-            getAccountAndWeb3();
+        if (!web3)
+            getConnectWeb3();
     }, [])
 
-    return { ...eth };
+    return web3;
 }

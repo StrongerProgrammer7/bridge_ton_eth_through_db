@@ -1,19 +1,26 @@
 // @ts-nocheck
-import React, { useContext, useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import css from './profile_doctor.module.css';
 import Accordion from 'react-bootstrap/Accordion';
-import { addRow, changeRow, isExistsAcessShowModal } from "./utils";
+import Modal from 'react-bootstrap/Modal';
+import { addRow, changeRow, isExistsAccess } from "./utils";
 import { getListPatients, getListIllsPatients } from "./helper";
 import { getRowData, openTab } from "../total_utlls";
 import SetDiagnosis from "../../../components/UI/Popups/set_diagnosis/SetDiagnosis";
 import MyTable from "../../../components/UI/Tables/MyTable";
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector } from "react-redux";
+import useTonClient from "../../../hooks/useTonClient";
+import { useEthContractConnect } from "../../../hooks/useEthContractConnect";
+import { useEthConnect } from "../../../hooks/useEthConnect";
 
 
 const ProfileDoctor = () =>
 {
   const user = useSelector(state => state.userReducer);
+  const web3 = useEthConnect();
+  const contractEth = useEthContractConnect(web3);
 
+  const { client } = useTonClient();
   const tablePatientRef = useRef();
   const tableIllsRef = useRef();
 
@@ -22,24 +29,36 @@ const ProfileDoctor = () =>
   const [isOpenPatients, setOpenPatients] = useState(false);
   const [isOpenIlls, setOpenIlls] = useState(false);
   const [showModalSetDiagnosis, setDiagnosisModalShow] = useState(false);
+  const [showModalMessage, setShowModalMessage] = useState(false);
+  const [message, setMessage] = useState('');
   const [selectedRowData, setSelectedRowData] = useState({});
   const [newDataAboutPatient, setNewDataAboutPatient] = useState(undefined);
   const [changeDiagnosis, setChangeDiagnosis] = useState(false);
-
   const handleShow = () => setDiagnosisModalShow(true);
   const handleClose = () => setDiagnosisModalShow(false);
+  const handleShowModalMessage = () => setShowModalMessage(true);
+  const handleCloseModalMessage = () => setShowModalMessage(false);
 
   useEffect(() =>
   {
     let idtime;
 
-    function getDataFromTableAndShowModal(event, dt, user, isChangeDiagnosis)
+    async function getDataFromTableAndShowModal(event, dt, user, isChangeDiagnosis)
     {
       setChangeDiagnosis(isChangeDiagnosis);
       const data = getRowData(event, dt);
       setSelectedRowData(data);
 
-      isExistsAcessShowModal(idtime, data.meta, user, handleShow);
+      const result = await isExistsAccess(data, user, client, contractEth);
+      if (result)
+      {
+        handleShow();
+      } else
+      {
+        handleShowModalMessage();
+        setMessage(`You don't have access to this patient ${ data.initials } wallet=${ data.name_wallet }`);
+        setTimeout(handleCloseModalMessage, 10000);
+      }
     }
     function handleClick(event) 
     {
@@ -53,6 +72,8 @@ const ProfileDoctor = () =>
       {
         getDataFromTableAndShowModal(event, dt_patients, user, false);
       }
+      if (event.target.id === 'btn_moreInfo')
+        console.log("TODO: show more info about patient");
     }
 
     document.addEventListener("click", handleClick);
@@ -113,7 +134,9 @@ const ProfileDoctor = () =>
                     { name: 'Действия', classname: '' },
                     { name: 'Список врачей', classname: '' },
                     { name: 'Id', classname: css.hide_columns },
-                    { name: 'meta', classname: css.hide_columns }
+                    { name: 'meta', classname: css.hide_columns },
+                    { name: 'name_wallet', classname: '' },
+                    { name: 'account_contract', classname: css.hide_columns }
                   ] }
                 ></MyTable>
               </Accordion.Body>
@@ -149,7 +172,9 @@ const ProfileDoctor = () =>
                     { name: 'Взаимодействие', classname: '' },
                     { name: 'id', classname: css.hide_columns },
                     { name: 'id_patient', classname: css.hide_columns },
-                    { name: 'meta', classname: css.hide_columns }
+                    { name: 'meta', classname: css.hide_columns },
+                    { name: 'name_wallet', classname: '' },
+                    { name: 'account_contract', classname: css.hide_columns }
                   ] }
                 ></MyTable>
               </Accordion.Body>
@@ -165,6 +190,15 @@ const ProfileDoctor = () =>
         user={ user }
         data_patient={ selectedRowData }
         setNewDataAboutPatient={ setNewDataAboutPatient } />
+
+      <Modal show={ showModalMessage } onHide={ handleCloseModalMessage }>
+        <Modal.Header closeButton>
+          <Modal.Title>Message for you</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          { message }
+        </Modal.Body>
+      </Modal>
     </>
   )
 }

@@ -85,6 +85,8 @@ export const connectContractETH = async (web3, abi, address) =>
 {
     try
     {
+        console.log(web3);
+        console.log("WEB#ETH", web3.eth)
         return new web3.eth.Contract(abi, address);
     }
     catch (error) 
@@ -131,6 +133,11 @@ export async function waitingTransaction(contract, message, nano, sender, client
             currentSeqno = await walletContract.getSeqno();
             if (flag === true || ind >= maxWait)
                 return false;
+        }
+        if (ind >= maxWait)
+        {
+            console.log("deploy transaction is not success confirmed!");
+            return false;
         }
         console.log("deploy transaction confirmed!");
         return true;

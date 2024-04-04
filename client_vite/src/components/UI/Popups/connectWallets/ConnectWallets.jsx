@@ -51,7 +51,7 @@ const ConnectWallets = () =>
         {
             if (window.ethereum.isMetaMask)
                 disconnectMetatmask();
-            disconnectWallet(dispatch, userAccounntWallet);
+            disconnectWallet(dispatch);
 
 
         }
@@ -64,7 +64,7 @@ const ConnectWallets = () =>
         if (!connected)
         {
             if (userAccounntWallet)
-                disconnectWallet(dispatch, wallet);
+                disconnectWallet(dispatch);
             return;
         }
         dispatch(UserControls.setAccountWallet(wallet));

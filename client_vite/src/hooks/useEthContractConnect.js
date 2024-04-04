@@ -1,6 +1,6 @@
 // @ts-nocheck
 import { useEffect, useState } from "react";
-import * as abi from "../http/ABIandAddress";
+import * as abi from "../http/getDataAboutContracts";
 import { connectContractETH } from "../utils/helper";
 
 export function useEthContractConnect(web3)
@@ -11,7 +11,9 @@ export function useEthContractConnect(web3)
     {
         async function getContractEth()
         {
-            const dataOfContract = await abi.getDataOfContract();
+            if (!web3)
+                return;
+            const dataOfContract = await abi.getDataOfContractEth();
             if (!dataOfContract || (dataOfContract.status && dataOfContract.status >= 300))
             {
                 console.error("Don't get data for contract (ABI and address )");
