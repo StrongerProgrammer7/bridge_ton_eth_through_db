@@ -18,7 +18,6 @@ import 'datatables.net-searchpanes';
 export function createButtonForAccess(list_doctors_have_access, id)
 {
     let button = `<div class='btn-group'>`;
-    console.log(list_doctors_have_access);
     if (isDoctorHaveAccess(list_doctors_have_access, id) > -1)
         button += ` ${ createButton("btn btn-danger btn-sm", "btn_action_revokeAccess", "Забрать доступ") }`
     else
@@ -30,7 +29,6 @@ export function createButtonForAccess(list_doctors_have_access, id)
 export function addActionForListDoctors(data, list_doctors_have_access = '')
 {
     if (!data) return data;
-    console.log(list_doctors_have_access);
     for (let i = 0; i < data.length; i++)
         data[i].action = createButtonForAccess(list_doctors_have_access, data[i].id);
 
@@ -66,12 +64,15 @@ export function changeButton(button, deleteClass, addClass, newId, textContent)
 
 export async function getTableActualIll(tableActualIllsRef, user)
 {
-    if (user.accountWallet === '') return;
+    if (!user.accountWallet) return;
     const data_ills = await getListActualIllsPatients(user.accountWallet);
-    const ills = addActionForListIlls(data_ills.data.data);
+    let ills = [];
+    if (data_ills.data.data)
+        ills = addActionForListIlls(data_ills.data.data);
+
     const dt_actualIlls = new DataTables(tableActualIllsRef.current,
         {
-            responsive: true,
+            // responsive: true,
             data: ills,
             columns: [
                 { data: "num" },
@@ -179,7 +180,7 @@ export async function getTableAllDoctors(tableDoctorRef, user, dispatch)
     const city = results[0].data.data;
     const data = results[1].data.data;
     const list_doc_have_access = results[2].data.data[0].list_doc ?? '';
-
+    console.log(list_doc_have_access, results[2].data.data[0])
     const doctors = addActionForListDoctors(data, list_doc_have_access);
 
     dispatch(UserControls.setNewListDoctor(list_doc_have_access.split(",")));

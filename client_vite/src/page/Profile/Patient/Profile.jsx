@@ -3,18 +3,26 @@
 import React, { useState, useRef, useEffect } from "react";
 import css from './profile.module.css';
 import Accordion from 'react-bootstrap/Accordion';
-
+import Spinner from 'react-bootstrap/Spinner';
+import Button from 'react-bootstrap/Button';
+import Modal from 'react-bootstrap/Modal';
 
 import { getTableActualIll, getTableAllDoctors, getTableAllIlls } from "./utils";
-import { updateListDoctorsGiveRole, updateListDoctorsRevokeRole } from "./helper";
+import { updateListDoctorsGiveRoleETH, updateListDoctorsGiveRoleTON, updateListDoctorsRevokeRoleETH, updateListDoctorsRevokeRoleTON } from "./helper";
 import MyTable from "../../../components/UI/Tables/MyTable";
 import { getRowData, openTab } from "../total_utlls";
 import { useDispatch, useSelector } from "react-redux";
 import 'datatables.net-bs5';
+import { NameWallet } from "../../../store/enums/WorkWithWallet";
+import useTonClient from "../../../hooks/useTonClient";
+import { useTonConnect } from "../../../hooks/useTonConnect";
+
 
 const Profile = () =>
 {
   const user = useSelector(state => state.userReducer);
+  const { client } = useTonClient();
+  const { sender } = useTonConnect();
   const dispatch = useDispatch();
 
   const tableDoctorsRef = useRef();
@@ -27,17 +35,24 @@ const Profile = () =>
   const [isOpenDoctors, setOpenDoctors] = useState(false);
   const [isOpenIlls, setOpenIlls] = useState(false);
 
+  const [showModalMnemonic, setShowModalMnemonic] = useState(false);
+  const [dataCurrentDoc, setDataCurrentDoc] = useState({ mnemonic: "orient uncle light cause emotion wonder rose skin scout solution expand lady frown subject weather void wasp claw easily economy remember dance ice pelican" });
+
+  const handleClose = () => setShowModalMnemonic(false);
+  const handleShow = () => setShowModalMnemonic(true);
+
+
   useEffect(() =>
   {
+    if (!user.accountWallet || !tableActualIllsRef)
+      return;
 
-    if (!dt_actualIlls)
-      getTableActualIll(tableActualIllsRef, user)
-        .then(data =>
-        {
-          console.log(data);
-          setDT_actualIlls(data);
-        });
-  }, [user.accountWallet, dt_actualIlls])
+    getTableActualIll(tableActualIllsRef, user)
+      .then(data =>
+      {
+        setDT_actualIlls(data);
+      });
+  }, [user.accountWallet, tableActualIllsRef.current])
   useEffect(() =>
   {
     function handleClick(event) 
@@ -45,14 +60,29 @@ const Profile = () =>
       if (event.target.id === "btn_action_giveAccess")
       {
         const data = getRowData(event, dt_doctors);
-        if (data)
-          updateListDoctorsGiveRole(data.id, data.meta, user, dispatch, dt_doctors, event.target); //TODO запись в ТОН Адресс
+        if (!data)
+          return;
+        if (user.personalInfo.nameWallet === NameWallet.ETH)
+          updateListDoctorsGiveRoleETH(data.id, data.meta, user, dispatch, dt_doctors, event.target);
+        else
+        {
+          setDataCurrentDoc({ ...dataCurrentDoc, id: data.id, meta: data.meta, btn: event.target });
+          handleShow();
+        }
       }
       if (event.target.id === "btn_action_revokeAccess")
       {
         const data = getRowData(event, dt_doctors); //TODO удалить из ТОН Адресс
-        if (data)
-          updateListDoctorsRevokeRole(data.id, data.meta, user, dispatch, dt_doctors, event.target);
+        if (!data)
+          return;
+        if (user.personalInfo.nameWallet === NameWallet.ETH)
+          updateListDoctorsRevokeRoleETH(data.id, data.meta, user, dispatch, dt_doctors, event.target);
+        else
+        {
+          setDataCurrentDoc({ ...dataCurrentDoc, id: data.id, meta: data.meta, btn: event.target });
+          handleShow();
+        }
+
       }
     }
 
@@ -80,15 +110,24 @@ const Profile = () =>
     }
 
     document.addEventListener("click", handleClick);
-    document.addEventListener('resize', recalcTables);
+    window.addEventListener('resize', recalcTables);
 
     return () =>
     {
       document.removeEventListener("click", handleClick);
-      document.removeEventListener('resize', recalcTables);
+      window.removeEventListener('resize', recalcTables);
     };
-  }, [/*tableDoctorsRef, dt_doctors, user*/]);
+  }, [user, dt_doctors, dt_actualIlls, dt_ills]);
 
+
+  if (!user.accountWallet || !user.contract || user.loading)
+  {
+    return (
+      <Spinner animation="border" role="status">
+        <span className="visually-hidden">Loading...</span>
+      </Spinner>
+    );
+  }
   return (
     <main className={ css.main }>
       <section id="options_data" className={ css.options_data }>
@@ -176,6 +215,47 @@ const Profile = () =>
           </Accordion.Item>
         </Accordion>
       </section>
+
+      <>
+        <Modal show={ showModalMnemonic } onHide={ handleClose }>
+          <Modal.Header closeButton>
+            <Modal.Title>Modal heading</Modal.Title>
+          </Modal.Header>
+          <Modal.Body>
+            <p> Mnemonic using only on your side and don't send by network</p>
+            <div className="mb-3" style={ { display: "block" } }>
+              <input
+                type="password"
+                className="form-control"
+                required={ user.personalInfo.nameWallet === NameWallet.TON } defaultValue="orient uncle light cause emotion wonder rose skin scout solution expand lady frown subject weather void wasp claw easily economy remember dance ice pelican"
+                onChange={ e => setDataCurrentDoc({ mnemonic: e.target.value, ...dataCurrentDoc }) }
+                autoComplete="none" />
+            </div>
+          </Modal.Body>
+          <Modal.Footer>
+            <Button variant="secondary" onClick={ () => { setDataCurrentDoc(undefined); handleClose(); } }>
+              Close
+            </Button>
+            <Button variant="primary"
+              onClick={ () =>
+              {
+                const utils_ton =
+                {
+                  mnemonic: dataCurrentDoc.mnemonic,
+                  client,
+                  sender,
+                };
+                if (dataCurrentDoc.btn.id === 'btn_action_giveAccess')
+                  updateListDoctorsGiveRoleTON(dataCurrentDoc.id, dataCurrentDoc.meta, user, dispatch, dt_doctors, dataCurrentDoc.btn, utils_ton);
+                else
+                  updateListDoctorsRevokeRoleTON(dataCurrentDoc.id, dataCurrentDoc.meta, user, dispatch, dt_doctors, dataCurrentDoc.btn, utils_ton);
+                handleClose();
+              } }>
+              Save Changes
+            </Button>
+          </Modal.Footer>
+        </Modal>
+      </>
     </main>
   )
 }

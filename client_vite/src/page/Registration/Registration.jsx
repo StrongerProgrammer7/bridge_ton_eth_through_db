@@ -330,7 +330,8 @@ const Registration = () =>
                                     disabled />
                             </div>
                             {
-                                user.personalInfo.nameWallet === NameWallet.TON && <div className="mb-3" style={ { display: "block" } }>
+                                user.personalInfo.nameWallet === NameWallet.TON &&
+                                <div className="mb-3" style={ { display: "block" } }>
                                     <label htmlFor="insurancePolicy" className="form-label">Секретные слова(они не будут переданы по сети, остаются в рамках вашего ПК)</label>
                                     <input
                                         type="password"

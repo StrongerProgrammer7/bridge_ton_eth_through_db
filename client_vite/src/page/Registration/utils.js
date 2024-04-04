@@ -1,10 +1,9 @@
 // @ts-nocheck
 import { registration } from "../../http/userAPI";
-import { WalletContractV4 } from '@ton/ton';
-import { mnemonicToWalletKey } from 'ton-crypto';
-import { Address, toNano } from "@ton/core";
+import { Address } from "@ton/core";
 import { checkRegistrationControls } from "../../models/checkIsRegistered";
 import { MessageForTON, NameWallet } from "../../store/enums/WorkWithWallet";
+import { waitingTransaction } from "../../utils/helper";
 export function optionCities(element)
 {
     return `${ element.region }:${ element.city }`
@@ -154,51 +153,7 @@ export async function registrationContractEthAndInDatabase(data, user, dispatch)
         });
 }
 
-function sleep(ms)
-{
-    return new Promise(resolve => setTimeout(resolve, ms));
-}
 
-async function waitingTransaction(contract, message, nano, sender, client, mnemonic)
-{
-    const key = await mnemonicToWalletKey(mnemonic.split(" "));
-    const wallet = WalletContractV4.create({ publicKey: key.publicKey, workchain: 0 });
-    try 
-    {
-        const walletContract = await client.open(wallet);
-        const seqno = await walletContract.getSeqno();
-        let flag = false;
-        let maxWait = 100;
-        contract.send(sender,
-            {
-                value: toNano(nano)
-            }, message)
-            .catch(err =>
-            {
-                console.log(err);
-                flag = true;
-                return;
-            });
-
-        let currentSeqno = seqno;
-        let ind = 0;
-        while (currentSeqno == seqno)
-        {
-            ind++;
-            console.log("waiting for deploy transaction to confirm...");
-            await sleep(5);
-            currentSeqno = await walletContract.getSeqno();
-            if (flag === true || ind >= maxWait)
-                return false;
-        }
-        console.log("deploy transaction confirmed!");
-        return true;
-    } catch (error) 
-    {
-        console.warn(error);
-        return false;
-    }
-}
 
 export async function registrationContractTonAndinDatabase(data, user, dispatch, sender, client, mnemonic)
 {
@@ -218,7 +173,7 @@ export async function registrationContractTonAndinDatabase(data, user, dispatch,
         id: BigInt(Number(countPatients) + 1)
     };
 
-    const result_registration_contract = await waitingTransaction(contract, msg, "0.3", sender, client, mnemonic);
+    const result_registration_contract = await waitingTransaction(contract, msg, "0.5", sender, client, mnemonic);
     if (!result_registration_contract)
         return;
     dispatch(checkRegistrationControls.setRegisteredContract(true));

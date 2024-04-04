@@ -6,6 +6,8 @@ export function createButton(class_text, id, text)
 
 export function recalcTable(dt, ms)
 {
+  if (!dt)
+    return;
   setTimeout(() =>
   {
     dt.responsive.recalc();

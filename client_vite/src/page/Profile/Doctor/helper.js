@@ -66,11 +66,6 @@ export const getListPatients = async (tablePatientRef, user) =>
                     sClass: css.hide_columns,
                     aTargets: [6, 7]
                 },
-                // {
-                //     target: -1,
-                //     visible: false,
-                //     searchable: true,
-                // },
                 {
                     searchPanes:
                     {
@@ -108,47 +103,14 @@ export const getListPatients = async (tablePatientRef, user) =>
                     },
                     targets: [4]
                 },
-                // {
-                //     searchPanes: {
-                //         show:true,
-                //         options: [
-                //             {
-                //                 label: 'Имеется доступ',
-                //                 value: function(rowData, rowIdx) 
-                //                 {
-                //                     if(rowData.list_doc_have_access_to_patient !== null)
-                //                         {
-                //                             //console.log(rowData.list_doc_have_access_to_patient);
-                //                             return rowData.list_doc_have_access_to_patient.includes('61')
-                //                         }
-                //                     return;
-                //                 }
-                //             }
-
-                //         ]
-                //     },
-                //     targets: [5]
-                // }
 
             ],
 
-            // dom: 'Bfrtip',
-            // buttons: [
-            //     {
-            //         text: 'Profession',
-            //         className: 'btn btn-primary dropdown-toggle',
-            //         action: function ( e, dt, node, config ) 
-            //         {
-            //             //$('.dt-button').toggleClass('')
-            //         }
-            //     }
-            // ],
+            dom: `P<"${ css.wrapper }"lf>rtip`,
             scrollY: 300,
             scrollX: false,
             deferRender: true,
             scroller: true
-            // select: true,
-            //keys: true
         });
 }
 
@@ -190,7 +152,7 @@ export const getListIllsPatients = async (tableIllsRef, user) =>
                 initCollapsed: true,
                 layout: 'columns-3',
             },
-            dom: 'Plfrtip',
+            dom: `P<"${ css.wrapper }"lf>rtip`,
             columnDefs: [
                 {
                     sClass: css.hide_columns,
@@ -213,7 +175,6 @@ export const getListIllsPatients = async (tableIllsRef, user) =>
 
             ],
             scrollY: 300,
-            scrollX: 100,
             deferRender: true,
             scroller: true
         });

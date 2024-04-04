@@ -2,7 +2,10 @@ import { getData, postData } from "../../../http/getDataAPI";
 import { changeButton, addActionForListDoctors } from "./utils";
 import { isExistsDatas } from '../total_utlls';
 import { UserControls } from "../../../models/user";
-
+import { MessageForTON, NameWallet } from "../../../store/enums/WorkWithWallet";
+import { Address } from "@ton/core";
+import { Patient } from "../../../utils/contractTon/wrappers/Patient";
+import { waitingTransaction } from "../../../utils/helper";
 async function updatelistDoctorsInDB(list_doctors, table_doctors, accountWallet, button)
 {
     postData("api/update_list_doctors", { meta: accountWallet, list_doctors_have_access: list_doctors })
@@ -23,7 +26,7 @@ async function updatelistDoctorsInDB(list_doctors, table_doctors, accountWallet,
         .catch(error => console.log("Error with update DB"));
 }
 
-function updateListDoctorsByContractMethod(user, name_method, meta_person)
+function updateListDoctorsByETHContractMethod(user, name_method, meta_person)
 {
     return user.contract.methods[name_method](meta_person).send({ from: user.accountWallet })
         .then((res) =>
@@ -46,7 +49,29 @@ function updateListDoctorsByContractMethod(user, name_method, meta_person)
             throw error;
         })
 }
-export async function updateListDoctorsGiveRole(id_doctor, meta_doctor, user, dispatch, dt, button)
+
+async function updateListDoctorsByTONContractMessage(contract_total, wallet, utils_ton, mnemonic)
+{
+    if (!mnemonic || !utils_ton.client || !utils_ton.sender || !utils_ton.msg)
+        return;
+
+    const contract_user_address = await contract_total.getContractPatient(Address.parse(wallet));
+    console.log(contract_user_address.toString());
+    const contract_user = Patient.fromAddress(contract_user_address);
+    const opened_contract_user = utils_ton.client.open(contract_user);
+    console.log(contract_user);
+    console.log(opened_contract_user);
+    const result = await waitingTransaction(opened_contract_user, utils_ton.msg, "0.3", utils_ton.sender, utils_ton.client, mnemonic);
+    if (result)
+        console.log((await opened_contract_user.getAllDocs()).values());
+    else
+        console.log(result, "Error");
+
+    return result;
+}
+
+
+export async function updateListDoctorsGiveRoleETH(id_doctor, meta_doctor, user, dispatch, dt, button)
 {
     console.log("update", id_doctor, meta_doctor, button);
     if (!isExistsDatas({ id_doctor, meta_doctor }, ['id_doctor', 'meta_doctor']))
@@ -54,12 +79,10 @@ export async function updateListDoctorsGiveRole(id_doctor, meta_doctor, user, di
         console.log("Data is not correct");
         return;
     }
-    updateListDoctorsByContractMethod(user, 'giveRole', meta_doctor)
+    updateListDoctorsByETHContractMethod(user, 'giveRole', meta_doctor)
         .then(async () =>
         {
             dispatch(UserControls.addDoctor(id_doctor));
-            //user.pushList_doctors(id_doctor);
-            console.log(user.listDoctorsAccess);
             let temp_list = user.listDoctorsAccess.toString();
             updatelistDoctorsInDB(temp_list, dt, user.accountWallet, button);
         })
@@ -70,32 +93,113 @@ export async function updateListDoctorsGiveRole(id_doctor, meta_doctor, user, di
 
 }
 
-export async function updateListDoctorsRevokeRole(id_doctor, meta_doctor, user, dispatch, dt, button)
+export async function updateListDoctorsGiveRoleTON(id_doctor, meta_doctor, user, dispatch, dt, button, utils_ton)
 {
+    console.log("update", id_doctor, meta_doctor, button);
     if (!isExistsDatas({ id_doctor, meta_doctor }, ['id_doctor', 'meta_doctor']))
     {
         console.log("Data is not correct");
         return;
     }
 
-    updateListDoctorsByContractMethod(user, 'anualRole', meta_doctor)
-        .then(async () =>
+    if (!utils_ton.mnemonic || !utils_ton.client || !utils_ton.sender)
+        return;
+    const message =
+    {
+        $$type: MessageForTON.ADD_ADDRESS,
+        address: meta_doctor,
+    }
+    utils_ton["msg"] = message;
+    updateListDoctorsByTONContractMessage(user.contract, user.accountWallet, utils_ton, utils_ton.mnemonic)
+        .then((result) =>
         {
-            const index = user.listDoctors.indexOf(id_doctor);
-            if (index === -1) return;
-            let _list = user.listDoctors;
-            _list.splice(index, 1);
-            const _list_str = _list.toString();
-            dispatch(UserControls.removeDoctor(id_doctor));
-            //user.setNewListDoctors(_list);
-
-            updatelistDoctorsInDB(_list_str, dt, user.accountWallet, button);
+            if (result)
+            {
+                dispatch(UserControls.addDoctor(id_doctor));
+                let temp_list = user.listDoctorsAccess.toString();
+                updatelistDoctorsInDB(temp_list, dt, user.accountWallet, button);
+            }
         })
-        .catch((err) =>
+        .catch((error) =>
         {
-            console.log('Error with contract or user denied', err);
+            console.log('Error with contract or user denied', error);
         });
+}
+export async function updateListDoctorsRevokeRoleETH(id_doctor, meta_doctor, user, dispatch, dt, button)
+{
+    if (!isExistsDatas({ id_doctor, meta_doctor }, ['id_doctor', 'meta_doctor']))
+    {
+        console.log("Data is not correct");
+        return;
+    }
+    if (!user.accountWallet || !user.contract)
+        return;
 
+    if (user.personalInfo.nameWallet === NameWallet.ETH)
+    {
+        updateListDoctorsByETHContractMethod(user, 'anualRole', meta_doctor)
+            .then(async () =>
+            {
+                const listDoctors = user.listDoctorsAccess;
+                const index = listDoctors.indexOf(id_doctor);
+                if (index === -1) return;
+                let _list = listDoctors;
+                _list.splice(index, 1);
+                const _list_str = _list.toString();
+                dispatch(UserControls.removeDoctor(id_doctor));
+
+
+                updatelistDoctorsInDB(_list_str, dt, user.accountWallet, button);
+            })
+            .catch((err) =>
+            {
+                console.log('Error with contract or user denied', err);
+            });
+    }
+    else
+    {
+        console.log("Revoke role doctor TON")
+    }
+}
+
+export async function updateListDoctorsRevokeRoleTON(id_doctor, meta_doctor, user, dispatch, dt, button, utils_ton)
+{
+    console.log("update", id_doctor, meta_doctor, button);
+
+    if (!isExistsDatas({ id_doctor, meta_doctor }, ['id_doctor', 'meta_doctor']))
+    {
+        console.log("Data is not correct");
+        return;
+    }
+
+    if (!utils_ton.mnemonic || !utils_ton.client || !utils_ton.sender)
+        return;
+    const message =
+    {
+        $$type: MessageForTON.REMOVE_ADDRESS,
+        address: meta_doctor,
+    }
+    utils_ton["msg"] = message;
+    console.log(utils_ton);
+    updateListDoctorsByTONContractMessage(user.contract, user.accountWallet, utils_ton, utils_ton.mnemonic)
+        .then((result) =>
+        {
+            if (result)
+            {
+                const _listDoctors = user.listDoctorsAccess;
+                let index = _listDoctors.indexOf(id_doctor);
+                if (index === -1) return;
+                _listDoctors.splice(index, 1);
+
+                const _list_str = _listDoctors.toString();
+                dispatch(UserControls.removeDoctor(id_doctor));
+                updatelistDoctorsInDB(_list_str, dt, user.accountWallet, button);
+            }
+        })
+        .catch((error) =>
+        {
+            console.log('Error with contract or user denied', error);
+        });
 }
 
 export async function getListIllsPatients(accountWallet, queryDoctor = false)

@@ -8,10 +8,9 @@ import { useTonConnect } from '../../../../hooks/useTonConnect';
 import useTonContract from '../../../../hooks/useTonContract';
 import { UserControls } from '../../../../models/user';
 import { keyLocalStorage, NameWallet } from '../../../../store/enums/WorkWithWallet';
-import { removeLocalStorageItem } from '../../../../utils/helper';
 import css from "./connectwallet.module.css";
 import metamask from "./images/MetaMask_Fox.svg.png";
-import { connectMetamask, disconnectMetatmask, isExistsPatientOrDoctor } from './utils';
+import { connectMetamask, disconnectMetatmask, isExistsPatientOrDoctor, disconnectWallet } from './utils';
 
 
 function connectWalet(dispatch)
@@ -50,9 +49,10 @@ const ConnectWallets = () =>
             connectWalet(dispatch);
         } else
         {
-            disconnectWallet(dispatch);
             if (window.ethereum.isMetaMask)
                 disconnectMetatmask();
+            disconnectWallet(dispatch, userAccounntWallet);
+
 
         }
 
@@ -64,7 +64,7 @@ const ConnectWallets = () =>
         if (!connected)
         {
             if (userAccounntWallet)
-                disconnectWallet(dispatch);
+                disconnectWallet(dispatch, wallet);
             return;
         }
         dispatch(UserControls.setAccountWallet(wallet));
