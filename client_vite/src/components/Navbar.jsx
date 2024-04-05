@@ -1,13 +1,13 @@
 // @ts-nocheck
-import React, { useState, useContext } from 'react';
-import { useLocation } from "react-router-dom";
+import React, { useState } from 'react';
+import { useLocation, useNavigate } from "react-router-dom";
 import MyNavbar from './UI/Navbar/MyNavbar';
 
 import { Button } from 'react-bootstrap';
 import PopupPersonalData from './UI/Popups/personalData/PopupPersonalData';
 import PopupSignIn from './UI/Popups/signIn/PopupSignIn';
 import { removeLocalStorageItem } from '../utils/helper';
-import { PROFILE_ROUTE, PROFILEDOCTOR_ROUTER, MAIN_ROUTE } from '../utils/consts';
+import { PROFILE_ROUTE, PROFILEDOCTOR_ROUTER, MAIN_ROUTE, REGISTRATION_ROUTE } from '../utils/consts';
 import { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { UserControls } from '../models/user';
@@ -22,13 +22,20 @@ const getTitle = (curentPath) =>
 }
 
 
-function logout(dispatch)
+function logout(dispatch, user)
 {
     try 
     {
+        const isPatient = user.isPatient;
+        const isDoctor = user.isDoctor;
+        const nameWallet = user.nameWallet;
+
         dispatch(UserControls.setAuth(false));
         dispatch(UserControls.setNewListDoctor([]));
         dispatch(UserControls.clearData());
+        dispatch(UserControls.setPatient(isPatient));
+        dispatch(UserControls.setDoctor(isDoctor));
+        dispatch(UserControls.setNameWallet(nameWallet));
         removeLocalStorageItem('isAuth');
 
     } catch (error) 
@@ -41,6 +48,7 @@ function logout(dispatch)
 const Navbar = () => 
 {
     const location = useLocation();
+    const navigate = useNavigate();
     const user = useSelector(state => state.userReducer);
     const dispatch = useDispatch();
 
@@ -54,11 +62,21 @@ const Navbar = () =>
     {
         const curentPath = location.pathname;
         let title = getTitle(curentPath);
-        if (curentPath !== MAIN_ROUTE)
+        if (curentPath !== MAIN_ROUTE && curentPath !== REGISTRATION_ROUTE)
             title = getTitle(curentPath) + `(${ user.personalInfo.nameWallet }) ` + user.personalInfo.name;
 
         setTitleNavbar(title);
-    }, [user.personalInfo.name, location.pathname])
+    }, [user.personalInfo.name, location.pathname]);
+
+    useEffect(() =>
+    {
+        if (!user.isAuth)
+            return;
+        if (user.personalInfo.isDoctor)
+            navigate(PROFILEDOCTOR_ROUTER);
+        else if (user.personalInfo.isPatient)
+            navigate(PROFILE_ROUTE);
+    }, [user.isAuth, user.personalInfo.isDoctor, user.personalInfo.isPatient])
     return (
         <>
             <MyNavbar
@@ -86,7 +104,7 @@ const Navbar = () =>
                                 <Button
                                     className="me-2"
                                     variant="danger"
-                                    onClick={ e => logout(dispatch) }>
+                                    onClick={ e => logout(dispatch, user.personalInfo) }>
                                     Выход
                                 </Button>
                             </>

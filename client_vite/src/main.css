@@ -7,3 +7,19 @@
 {
    z-index: 1 !important;
 }
+
+html,body
+{
+   height: 100%;
+}
+#root
+{
+   min-height: 100%;
+   display: flex;
+   flex-direction: column;
+}
+
+.wrapper_main
+{
+   flex: 1 1 auto;
+}

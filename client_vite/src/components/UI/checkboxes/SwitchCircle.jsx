@@ -10,7 +10,6 @@ const SwitchCircle = () =>
 
   useEffect(() =>
   {
-    console.log("try connect with wallet");
     if (!user.accountWallet)
       setConnectedWallet(false);
     else

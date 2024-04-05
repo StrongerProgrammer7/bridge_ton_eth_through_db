@@ -91,7 +91,7 @@ const Registration = () =>
 
     }, []);
 
-    if (!sender || !client || user.loading)
+    if ((user.personalInfo.nameWallet === NameWallet.TON && !sender && !client) || user.loading)
     {
         return (
             <Spinner animation="border" role="status">
@@ -141,6 +141,7 @@ const Registration = () =>
             return;
         }
         let response;
+        console.log(data);
         if (user.personalInfo.nameWallet === NameWallet.ETH)
             response = await registrationContractEthAndInDatabase(data, user, dispatch);
         else

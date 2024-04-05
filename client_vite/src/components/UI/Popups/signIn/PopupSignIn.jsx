@@ -58,7 +58,6 @@ const PopupSignIn = (props) =>
                 </Button>
                 <Button variant="primary" onClick={ e => 
                 {
-                    console.log(password);
                     signIn({ meta: props.wallet, pass: password, isDoctor: props.isDoctor }, dispatch);
                     props.handleClose(false);
                 } }>

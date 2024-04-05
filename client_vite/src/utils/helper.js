@@ -85,8 +85,6 @@ export const connectContractETH = async (web3, abi, address) =>
 {
     try
     {
-        console.log(web3);
-        console.log("WEB#ETH", web3.eth)
         return new web3.eth.Contract(abi, address);
     }
     catch (error) 

@@ -180,10 +180,10 @@ export async function getTableAllDoctors(tableDoctorRef, user, dispatch)
     const city = results[0].data.data;
     const data = results[1].data.data;
     const list_doc_have_access = results[2].data.data[0].list_doc ?? '';
-    console.log(list_doc_have_access, results[2].data.data[0])
+
     const doctors = addActionForListDoctors(data, list_doc_have_access);
 
-    dispatch(UserControls.setNewListDoctor(list_doc_have_access.split(",")));
+    dispatch(UserControls.setNewListDoctor(list_doc_have_access.length === 0 ? [] : list_doc_have_access.split(",")));
     return new DataTables(tableDoctorRef.current,//$(tableRef.current).DataTable(
         {
             responsive: true,

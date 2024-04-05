@@ -9,7 +9,8 @@ import Navbar from 'react-bootstrap/Navbar';
 
 import SwitchCircle from "../checkboxes/SwitchCircle";
 import { REGISTRATION_ROUTE,MAIN_ROUTE, PROFILEDOCTOR_ROUTER, PROFILE_ROUTE } from "../../../utils/consts";
-import Spinner from 'react-bootstrap/Spinner';
+import BlackLoading from "../loadings/blackloading/BlackLoadings";
+
 import { useSelector } from "react-redux";
 
 
@@ -24,9 +25,7 @@ const MyNavbar = ({title,title_mainPage,location,...props}) =>
     if(user.loading)
     {
         return(
-            <Spinner animation="border" role="status">
-                <span className="visually-hidden">Loading...</span>
-            </Spinner>
+            <BlackLoading />
         );
     }
     const curentPath = location.pathname;

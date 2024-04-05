@@ -16,7 +16,7 @@ import 'datatables.net-bs5';
 import { NameWallet } from "../../../store/enums/WorkWithWallet";
 import useTonClient from "../../../hooks/useTonClient";
 import { useTonConnect } from "../../../hooks/useTonConnect";
-
+import Message from "../../../components/UI/Popups/message/Message";
 
 const Profile = () =>
 {
@@ -37,6 +37,11 @@ const Profile = () =>
 
   const [showModalMnemonic, setShowModalMnemonic] = useState(false);
   const [dataCurrentDoc, setDataCurrentDoc] = useState({ mnemonic: "orient uncle light cause emotion wonder rose skin scout solution expand lady frown subject weather void wasp claw easily economy remember dance ice pelican" });
+
+  const [message, setMessage] = useState('');
+  const [showModalMessage, setShowModalMessage] = useState(false);
+  const handleShowModalMessage = () => setShowModalMessage(true);
+  const handleCloseModalMessage = () => setShowModalMessage(false);
 
   const handleClose = () => setShowModalMnemonic(false);
   const handleShow = () => setShowModalMnemonic(true);
@@ -63,7 +68,28 @@ const Profile = () =>
         if (!data)
           return;
         if (user.personalInfo.nameWallet === NameWallet.ETH)
-          updateListDoctorsGiveRoleETH(data.id, data.meta, user, dispatch, dt_doctors, event.target);
+        {
+          updateListDoctorsGiveRoleETH(data.id, data.meta, user, dispatch, dt_doctors, event.target)
+            .then((result) =>
+            {
+              handleShowModalMessage();
+              if (result)
+              {
+
+                setMessage(`Теперь у врача есть доступ `);
+              } else
+              {
+                if (!result)
+                  setMessage(`Неизвесная ошибка ${ result }`);
+                else
+                  setMessage(`Что-то пошло не так, вы скорее всего отказались забрать доступ`);
+              }
+              setTimeout(() =>
+              {
+                handleCloseModalMessage();
+              }, 5000);
+            })
+        }
         else
         {
           setDataCurrentDoc({ ...dataCurrentDoc, id: data.id, meta: data.meta, btn: event.target });
@@ -76,7 +102,23 @@ const Profile = () =>
         if (!data)
           return;
         if (user.personalInfo.nameWallet === NameWallet.ETH)
-          updateListDoctorsRevokeRoleETH(data.id, data.meta, user, dispatch, dt_doctors, event.target);
+          updateListDoctorsRevokeRoleETH(data.id, data.meta, user, dispatch, dt_doctors, event.target)
+            .then((result) =>
+            {
+              handleShowModalMessage();
+              if (result)
+              {
+
+                setMessage(`Теперь у врача нет доступа `);
+              } else
+              {
+                setMessage(`Неизвесная ошибка ${ result }`);
+              }
+              setTimeout(() =>
+              {
+                handleCloseModalMessage();
+              }, 5000);
+            })
         else
         {
           setDataCurrentDoc({ ...dataCurrentDoc, id: data.id, meta: data.meta, btn: event.target });
@@ -111,7 +153,6 @@ const Profile = () =>
 
     document.addEventListener("click", handleClick);
     window.addEventListener('resize', recalcTables);
-
     return () =>
     {
       document.removeEventListener("click", handleClick);
@@ -245,16 +286,55 @@ const Profile = () =>
                   client,
                   sender,
                 };
+
                 if (dataCurrentDoc.btn.id === 'btn_action_giveAccess')
-                  updateListDoctorsGiveRoleTON(dataCurrentDoc.id, dataCurrentDoc.meta, user, dispatch, dt_doctors, dataCurrentDoc.btn, utils_ton);
+                  updateListDoctorsGiveRoleTON(dataCurrentDoc.id, dataCurrentDoc.meta, user, dispatch, dt_doctors, dataCurrentDoc.btn, utils_ton)
+                    .then((result) =>
+                    {
+                      handleShowModalMessage();
+                      if (result)
+                      {
+
+                        setMessage(`Теперь у врача есть доступ `);
+                      } else
+                      {
+                        setMessage(`Произошла какая-то ошибка ${ result }`);
+                      }
+                      setTimeout(() =>
+                      {
+                        handleCloseModalMessage();
+                      }, 5000);
+                    })
                 else
-                  updateListDoctorsRevokeRoleTON(dataCurrentDoc.id, dataCurrentDoc.meta, user, dispatch, dt_doctors, dataCurrentDoc.btn, utils_ton);
+                  updateListDoctorsRevokeRoleTON(dataCurrentDoc.id, dataCurrentDoc.meta, user, dispatch, dt_doctors, dataCurrentDoc.btn, utils_ton).
+                    then((result) =>
+                    {
+                      handleShowModalMessage();
+                      if (result)
+                      {
+
+                        setMessage(`Теперь у врача нет доступа `);
+                      } else
+                      {
+                        setMessage(`Произошла какая-то ошибка ${ result }`);
+                      }
+                      setTimeout(() =>
+                      {
+                        handleCloseModalMessage();
+                      }, 5000);
+                    })
                 handleClose();
               } }>
               Save Changes
             </Button>
           </Modal.Footer>
         </Modal>
+
+        <Message
+          handleCloseModalMessage={ handleCloseModalMessage }
+          message={ message }
+          showModalMessage={ showModalMessage }
+        />
       </>
     </main>
   )

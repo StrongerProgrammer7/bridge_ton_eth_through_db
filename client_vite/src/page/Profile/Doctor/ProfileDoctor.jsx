@@ -48,7 +48,7 @@ const ProfileDoctor = () =>
       setChangeDiagnosis(isChangeDiagnosis);
       const data = getRowData(event, dt);
       setSelectedRowData(data);
-
+      console.log("CLIENT = ", client);
       const result = await isExistsAccess(data, user, client, contractEth);
       if (result)
       {
@@ -154,7 +154,7 @@ const ProfileDoctor = () =>
                     },
                     user);
                 } }>
-                Список болезней
+                Список назначенных болезней
               </Accordion.Header>
               <Accordion.Body>
                 <MyTable

@@ -12,7 +12,9 @@ const ActionTypes =
     LOADING: 'LOADING',
     NAME_WALLET: 'NAME_WALLET',
     CLEAR_DATA: 'CLEAR_DATA',
-    WEB3_CONNECT: 'WEB3_CONNECT'
+    WEB3_CONNECT: 'WEB3_CONNECT',
+    ISDOCTOR: 'IS_DOCTOR',
+    ISPATIENT: 'IS_PATIENT'
 };
 
 export const ActionRegistration =

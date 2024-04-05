@@ -8,22 +8,33 @@ import { Patient } from "../../../utils/contractTon/wrappers/Patient";
 import { waitingTransaction } from "../../../utils/helper";
 async function updatelistDoctorsInDB(list_doctors, table_doctors, accountWallet, button)
 {
-    postData("api/update_list_doctors", { meta: accountWallet, list_doctors_have_access: list_doctors })
+    console.log("LIST =", list_doctors);
+    return postData("api/update_list_doctors", { meta: accountWallet, list_doctors_have_access: list_doctors })
         .then((data) =>
         {
             if (button.id === "btn_action_giveAccess")
             {
                 changeButton(button, 'btn-info', 'btn-danger', 'btn_action_revokeAccess', 'Забрать доступ');
                 addActionForListDoctors(table_doctors.data(), list_doctors);
-                table_doctors.draw();
+
             } else
             {
                 changeButton(button, 'btn-danger', 'btn-info', 'btn_action_giveAccess', 'Дать доступ');
                 addActionForListDoctors(table_doctors.data(), list_doctors);
-                table_doctors.draw();
             }
+            console.log("what");
+            table_doctors.draw();
+            return true;
         })
-        .catch(error => console.log("Error with update DB"));
+        .catch(error => 
+        {
+
+            console.log("Error with update DB");
+            console.log(error);
+            if (error.response)
+                console.log(error.response.data.message);
+            return false;
+        });
 }
 
 function updateListDoctorsByETHContractMethod(user, name_method, meta_person)
@@ -61,13 +72,14 @@ async function updateListDoctorsByTONContractMessage(contract_total, wallet, uti
     const opened_contract_user = utils_ton.client.open(contract_user);
     console.log(contract_user);
     console.log(opened_contract_user);
+
     const result = await waitingTransaction(opened_contract_user, utils_ton.msg, "0.3", utils_ton.sender, utils_ton.client, mnemonic);
     if (result)
-        console.log((await opened_contract_user.getAllDocs()).values());
+        return true;
     else
-        console.log(result, "Error");
+        return false;
 
-    return result;
+
 }
 
 
@@ -79,12 +91,12 @@ export async function updateListDoctorsGiveRoleETH(id_doctor, meta_doctor, user,
         console.log("Data is not correct");
         return;
     }
-    updateListDoctorsByETHContractMethod(user, 'giveRole', meta_doctor)
+    return updateListDoctorsByETHContractMethod(user, 'giveRole', meta_doctor)
         .then(async () =>
         {
             dispatch(UserControls.addDoctor(id_doctor));
             let temp_list = user.listDoctorsAccess.toString();
-            updatelistDoctorsInDB(temp_list, dt, user.accountWallet, button);
+            return updatelistDoctorsInDB(temp_list, dt, user.accountWallet, button);
         })
         .catch((err) =>
         {
@@ -110,15 +122,17 @@ export async function updateListDoctorsGiveRoleTON(id_doctor, meta_doctor, user,
         address: meta_doctor,
     }
     utils_ton["msg"] = message;
-    updateListDoctorsByTONContractMessage(user.contract, user.accountWallet, utils_ton, utils_ton.mnemonic)
+    return updateListDoctorsByTONContractMessage(user.contract, user.accountWallet, utils_ton, utils_ton.mnemonic)
         .then((result) =>
         {
+
             if (result)
             {
                 dispatch(UserControls.addDoctor(id_doctor));
                 let temp_list = user.listDoctorsAccess.toString();
-                updatelistDoctorsInDB(temp_list, dt, user.accountWallet, button);
+                return updatelistDoctorsInDB(temp_list, dt, user.accountWallet, button);
             }
+            return result;
         })
         .catch((error) =>
         {
@@ -137,19 +151,21 @@ export async function updateListDoctorsRevokeRoleETH(id_doctor, meta_doctor, use
 
     if (user.personalInfo.nameWallet === NameWallet.ETH)
     {
-        updateListDoctorsByETHContractMethod(user, 'anualRole', meta_doctor)
+        return updateListDoctorsByETHContractMethod(user, 'anualRole', meta_doctor)
             .then(async () =>
             {
                 const listDoctors = user.listDoctorsAccess;
+
                 const index = listDoctors.indexOf(id_doctor);
                 if (index === -1) return;
                 let _list = listDoctors;
                 _list.splice(index, 1);
-                const _list_str = _list.toString();
+                const _list_str = _list.toString() || ",";
+
                 dispatch(UserControls.removeDoctor(id_doctor));
 
 
-                updatelistDoctorsInDB(_list_str, dt, user.accountWallet, button);
+                return updatelistDoctorsInDB(_list_str, dt, user.accountWallet, button);
             })
             .catch((err) =>
             {
@@ -181,20 +197,25 @@ export async function updateListDoctorsRevokeRoleTON(id_doctor, meta_doctor, use
     }
     utils_ton["msg"] = message;
     console.log(utils_ton);
-    updateListDoctorsByTONContractMessage(user.contract, user.accountWallet, utils_ton, utils_ton.mnemonic)
+    return updateListDoctorsByTONContractMessage(user.contract, user.accountWallet, utils_ton, utils_ton.mnemonic)
         .then((result) =>
         {
             if (result)
             {
-                const _listDoctors = user.listDoctorsAccess;
-                let index = _listDoctors.indexOf(id_doctor);
-                if (index === -1) return;
-                _listDoctors.splice(index, 1);
+                const listDoctors = user.listDoctorsAccess;
+                console.log(listDoctors, id_doctor);
+                const index = listDoctors.indexOf(id_doctor.toString());
 
-                const _list_str = _listDoctors.toString();
+                if (index === -1) return;
+                let _list = listDoctors;
+                _list.splice(index, 1);
+                const _list_str = _list.toString() || ",";
                 dispatch(UserControls.removeDoctor(id_doctor));
-                updatelistDoctorsInDB(_list_str, dt, user.accountWallet, button);
+
+
+                return updatelistDoctorsInDB(_list_str, dt, user.accountWallet, button);
             }
+            return result;
         })
         .catch((error) =>
         {

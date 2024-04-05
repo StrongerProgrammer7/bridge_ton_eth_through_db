@@ -27,6 +27,7 @@ export const connectMetamask = async (dispatch) =>
 
   dispatch(UserControls.setAccountWallet(accounts[0]));
   dispatch(UserControls.setWeb3Connect(web3));
+  dispatch(UserControls.setNameWallet(NameWallet.ETH));
 
   await connectContract(web3, dispatch);
   isExistsPatientOrDoctor(dispatch, accounts[0]);
@@ -53,7 +54,7 @@ const connectContract = async (web3, dispatch) =>
   const contract = await connectContractETH(web3, data.abi, data.address);
   window.contract = contract;
   dispatch(UserControls.setContract(contract));
-  dispatch(UserControls.setNameWallet(NameWallet.ETH));
+
 
 }
 

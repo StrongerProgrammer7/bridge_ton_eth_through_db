@@ -7,7 +7,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { useTonConnect } from '../../../../hooks/useTonConnect';
 import useTonContract from '../../../../hooks/useTonContract';
 import { UserControls } from '../../../../models/user';
-import { keyLocalStorage, NameWallet } from '../../../../store/enums/WorkWithWallet';
+import { NameWallet } from '../../../../store/enums/WorkWithWallet';
 import css from "./connectwallet.module.css";
 import metamask from "./images/MetaMask_Fox.svg.png";
 import { connectMetamask, disconnectMetatmask, isExistsPatientOrDoctor, disconnectWallet } from './utils';
@@ -27,6 +27,7 @@ function connectWalet(dispatch)
 const ConnectWallets = () => 
 {
     const userAccounntWallet = useSelector((state) => state.userReducer.accountWallet);
+    const userContract = useSelector((state) => state.userReducer.contract);
     const userNameWallet = useSelector((state) => state.userReducer.personalInfo.nameWallet);
     const dispatch = useDispatch();
     const { network, wallet, connected } = useTonConnect();
@@ -42,35 +43,74 @@ const ConnectWallets = () =>
         {
             console.log("Using only one wallet! disalbe ton wallet");
             return;
-        }
-        if (!userNameWallet)
-        {
-            handleClose();
-            connectWalet(dispatch);
         } else
         {
-            if (window.ethereum.isMetaMask)
-                disconnectMetatmask();
-            disconnectWallet(dispatch);
-
-
+            if (!userAccounntWallet || !userContract)
+            {
+                handleClose();
+                connectWalet(dispatch);
+            }
         }
 
     }
+
+    const disconnectWalletMetamask = () =>
+    {
+        if (window.ethereum.isMetaMask && userAccounntWallet)
+            disconnectMetatmask();
+        disconnectWallet(dispatch);
+    }
+
+
+    useEffect(() =>
+    {
+        const disconnectWalletTon = (event) =>
+        {
+            // console.log(event.target, event.target.tagName, event.target.textContent);
+            if (event.target.textContent.trim() === "Disconnect")
+            {
+                const maxParent = 5;
+                let parentElem = event.target;
+                for (let i = 0; i < maxParent; i++)
+                {
+                    parentElem = parentElem.parentNode;
+                    if (parentElem.tagName === 'TC-ROOT')
+                        break;
+                }
+                // console.log(event.target.textContent.trim() === "Disconnect", parentElem)
+                if (parentElem.tagName === 'TC-ROOT')
+                {
+                    console.log("Ton disconnect");
+                    if (userNameWallet === NameWallet.TON)
+                        disconnectWallet(dispatch);
+                }
+            }
+        }
+
+        document.addEventListener("click", disconnectWalletTon);
+        return () =>
+        {
+            document.removeEventListener("click", disconnectWalletTon);
+        };
+    }, []);
+
+    useEffect(() =>
+    {
+        if (userNameWallet === NameWallet.ETH)
+            connectMetamask();
+    }, [userNameWallet])
 
     useEffect(() =>
     {
         console.log("try connect with ton", connected);
         if (!connected)
-        {
-            if (userAccounntWallet)
-                disconnectWallet(dispatch);
             return;
-        }
+
         dispatch(UserControls.setAccountWallet(wallet));
         dispatch(UserControls.setNameWallet(NameWallet.TON));
 
     }, [connected, network, wallet]);
+
 
     useEffect(() =>
     {
@@ -92,7 +132,7 @@ const ConnectWallets = () =>
                 </Modal.Header>
                 <Modal.Body>
                     <div className={ css.connect_wallet }>
-                        <div onClick={ connectMetamask } className={ css.connect_metamask }>
+                        <div onClick={ !userAccounntWallet || !userContract ? connectMetamask : disconnectWalletMetamask } className={ css.connect_metamask }>
                             <div>
                                 <img src={ metamask } alt="metamask" />
                             </div>

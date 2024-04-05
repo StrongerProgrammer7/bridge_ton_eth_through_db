@@ -11,12 +11,14 @@ const useTonClient = () =>
     return {
         client: useAsyncInitialize(async () =>
         {
-            if (!network) return;
+            let net = network;
+            if (!network)
+                net = CHAIN.TESTNET;
             return new TonClient(
                 {
                     endpoint: await getHttpEndpoint(
                         {
-                            network: network === CHAIN.TESTNET ? "testnet" : "mainnet"
+                            network: net === CHAIN.TESTNET ? "testnet" : "mainnet"
                         }
                     )
                 }

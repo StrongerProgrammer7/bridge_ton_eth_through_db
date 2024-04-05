@@ -40,7 +40,9 @@ function App()
   return (
     <BrowserRouter>
       <Navbar></Navbar>
-      <AppRouter></AppRouter>
+      <div className='wrapper_main'>
+        <AppRouter></AppRouter>
+      </div>
       <Footer></Footer>
     </BrowserRouter>
 
