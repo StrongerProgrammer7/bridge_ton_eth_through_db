@@ -1,24 +1,20 @@
 // @ts-nocheck
-import React, { useState, useEffect, memo } from 'react';
-import { useSelector } from 'react-redux';
-import ConnectWallets from '../Popups/connectWallets/ConnectWallets';
+import React, { useState, useEffect } from 'react';
 import css from "./switchCircle.module.css";
-const SwitchCircle = () => 
+const SwitchCircle = ({ depend }) => 
 {
-  const user = useSelector((state) => state.userReducer);
   const [connectedWallet, setConnectedWallet] = useState(false);
 
   useEffect(() =>
   {
-    if (!user.accountWallet)
+    if (!depend)
       setConnectedWallet(false);
     else
       setConnectedWallet(true);
-  }, [user.accountWallet])
+  }, [depend])
 
   return (
     <div className='d-flex gap-2'>
-      <ConnectWallets />
       <div className={ css.navigationPanel_header__switch + ' mt-2 ml-2' }>
         <input type="checkbox" id="switch__buttonThree" checked={ connectedWallet } disabled={ connectedWallet } readOnly />
         <label ><i></i>
@@ -32,4 +28,4 @@ const SwitchCircle = () =>
   )
 }
 
-export default memo(SwitchCircle);
+export default SwitchCircle;

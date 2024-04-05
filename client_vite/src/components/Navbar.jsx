@@ -1,4 +1,3 @@
-// @ts-nocheck
 import React, { useState } from 'react';
 import { useLocation, useNavigate } from "react-router-dom";
 import MyNavbar from './UI/Navbar/MyNavbar';
@@ -11,6 +10,9 @@ import { PROFILE_ROUTE, PROFILEDOCTOR_ROUTER, MAIN_ROUTE, REGISTRATION_ROUTE } f
 import { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { UserControls } from '../models/user';
+import ConnectWallets from './UI/Popups/connectWallets/ConnectWallets';
+import SwitchCircle from './UI/checkboxes/SwitchCircle';
+import BlackLoading from './UI/loadings/blackloading/BlackLoadings';
 
 const getTitle = (curentPath) =>
 {
@@ -49,7 +51,10 @@ const Navbar = () =>
 {
     const location = useLocation();
     const navigate = useNavigate();
+    // @ts-ignore
     const user = useSelector(state => state.userReducer);
+    // @ts-ignore
+    const isExistsUser = useSelector((state) => state.checkRegistrationDataReducer.isRegistered);
     const dispatch = useDispatch();
 
     const [titleNavbar, setTitleNavbar] = useState("Система взаимодействия");
@@ -76,24 +81,33 @@ const Navbar = () =>
             navigate(PROFILEDOCTOR_ROUTER);
         else if (user.personalInfo.isPatient)
             navigate(PROFILE_ROUTE);
-    }, [user.isAuth, user.personalInfo.isDoctor, user.personalInfo.isPatient])
+    }, [user.isAuth, user.personalInfo.isDoctor, user.personalInfo.isPatient]);
+
+    if (user.loading)
+    {
+        return (
+            <BlackLoading />
+        );
+    }
+
     return (
         <>
             <MyNavbar
                 title={ titleNavbar }
-                title_mainPage="Главная"
-                location={ location } >
-
+                title_mainPage="Главная" >
                 <>
-                    <Button
-                        variant="light"
-                        onClick={ e => handleShow() }
-                        className="me-2"
-                    >
-                        { user.isAuth ? 'Личные данные' : 'Войти' }
-                    </Button>
                     {
-                        user.isAuth ?
+                        isExistsUser && <Button
+                            variant="light"
+                            onClick={ e => handleShow() }
+                            className="me-2"
+                        >
+                            { user.isAuth ? 'Личные данные' : 'Войти' }
+                        </Button>
+                    }
+                    {
+                        user.isAuth
+                            ?
                             <>
                                 <PopupPersonalData
                                     show={ show }
@@ -117,6 +131,8 @@ const Navbar = () =>
                                 isDoctor={ user.personalInfo.isDoctor } />
                     }
                 </>
+                <ConnectWallets />
+                <SwitchCircle depend={ user.accountWallet } />
             </MyNavbar>
         </>
     )

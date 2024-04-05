@@ -1,6 +1,6 @@
 // @ts-nocheck
 import { TonConnectButton } from '@tonconnect/ui-react';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, memo } from 'react';
 import Button from 'react-bootstrap/Button';
 import Modal from 'react-bootstrap/Modal';
 import { useDispatch, useSelector } from 'react-redux';
@@ -13,45 +13,36 @@ import metamask from "./images/MetaMask_Fox.svg.png";
 import { connectMetamask, disconnectMetatmask, isExistsPatientOrDoctor, disconnectWallet } from './utils';
 
 
-function connectWalet(dispatch)
-{
-    if (!window.ethereum || !window.ethereum.isMetaMask)
-    {
-        console.warn('You are using other wallet or don"t install MetaMask!');
-        return;
-    }
-    connectMetamask(dispatch);
-}
-
-
 const ConnectWallets = () => 
 {
     const userAccounntWallet = useSelector((state) => state.userReducer.accountWallet);
     const userContract = useSelector((state) => state.userReducer.contract);
     const userNameWallet = useSelector((state) => state.userReducer.personalInfo.nameWallet);
     const dispatch = useDispatch();
-    const { network, wallet, connected } = useTonConnect();
+    const { wallet, connected } = useTonConnect();
     const contract = useTonContract();
-    const [show, setShow] = useState(false);
 
+    const [show, setShow] = useState(false);
     const handleClose = () => setShow(false);
     const handleShow = () => setShow(true);
 
-    const connectMetamask = () =>
+    const connectWalletMetamask = () =>
     {
         if (userNameWallet === NameWallet.TON)
         {
             console.log("Using only one wallet! disalbe ton wallet");
             return;
-        } else
-        {
-            if (!userAccounntWallet || !userContract)
-            {
-                handleClose();
-                connectWalet(dispatch);
-            }
         }
-
+        if (!window.ethereum || !window.ethereum.isMetaMask)
+        {
+            console.warn('You are using other wallet or don"t install MetaMask!');
+            return;
+        }
+        if (!userAccounntWallet || !userContract)
+        {
+            handleClose();
+            connectMetamask(dispatch);
+        }
     }
 
     const disconnectWalletMetamask = () =>
@@ -80,8 +71,8 @@ const ConnectWallets = () =>
                 // console.log(event.target.textContent.trim() === "Disconnect", parentElem)
                 if (parentElem.tagName === 'TC-ROOT')
                 {
-                    console.log("Ton disconnect");
-                    if (userNameWallet === NameWallet.TON)
+                    console.log("Ton disconnect ", userNameWallet);
+                    if (userNameWallet !== NameWallet.ETH)
                         disconnectWallet(dispatch);
                 }
             }
@@ -97,29 +88,22 @@ const ConnectWallets = () =>
     useEffect(() =>
     {
         if (userNameWallet === NameWallet.ETH)
-            connectMetamask();
+            connectWalletMetamask();
     }, [userNameWallet])
 
     useEffect(() =>
     {
         console.log("try connect with ton", connected);
-        if (!connected)
+        if (!connected || !contract.contract_patients)
             return;
 
         dispatch(UserControls.setAccountWallet(wallet));
         dispatch(UserControls.setNameWallet(NameWallet.TON));
-
-    }, [connected, network, wallet]);
-
-
-    useEffect(() =>
-    {
-        console.log("try connect contract TON", contract);
-        if (!contract.contract_patients)
-            return;
         dispatch(UserControls.setContract(contract.contract_patients));
         isExistsPatientOrDoctor(dispatch, wallet);
-    }, [contract.contract_patients]);
+
+    }, [connected, contract.contract_patients, wallet]);
+
     return (
         <>
             <Button variant="light" onClick={ handleShow }>
@@ -132,7 +116,7 @@ const ConnectWallets = () =>
                 </Modal.Header>
                 <Modal.Body>
                     <div className={ css.connect_wallet }>
-                        <div onClick={ !userAccounntWallet || !userContract ? connectMetamask : disconnectWalletMetamask } className={ css.connect_metamask }>
+                        <div onClick={ !userAccounntWallet || !userContract ? connectWalletMetamask : disconnectWalletMetamask } className={ css.connect_metamask }>
                             <div>
                                 <img src={ metamask } alt="metamask" />
                             </div>
@@ -153,5 +137,5 @@ const ConnectWallets = () =>
     );
 }
 
-export default ConnectWallets;
+export default memo(ConnectWallets);
 
