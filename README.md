@@ -1,12 +1,11 @@
 <sub>**This work was done as part of the Course work by Author: Abdyukov Z.M. **</sub> 
 <h3>Content</h3>
 
-[Brief introduction]()<br>
-[Development tools]()<br>
-[Architecture]()<br>
-[What is the change compared to the previous work]()<br>
-[View Prototype]()
-
+[Brief introduction](https://github.com/StrongerProgrammer7/bridge_ton_eth_through_db?tab=readme-ov-file#-brief-introduction-)<br>
+[Development tools](https://github.com/StrongerProgrammer7/bridge_ton_eth_through_db?tab=readme-ov-file#development-tools-and-programming-language)<br>
+[Architecture](https://github.com/StrongerProgrammer7/bridge_ton_eth_through_db?tab=readme-ov-file#architecture)<br>
+[View Prototype](https://github.com/StrongerProgrammer7/bridge_ton_eth_through_db?tab=readme-ov-file#-view-prototype-)
+[TODO](https://github.com/StrongerProgrammer7/bridge_ton_eth_through_db?tab=readme-ov-file#-todo-)
 
 <div align="center">
 <h1>Bridge TON - ETH through DB</h1>
@@ -16,9 +15,9 @@
 <h3 align="center"> Brief introduction </h3>
  <p>The main goal of the work is to create a bridge between ETH & TON smart contracts through a database. This will increase work flexibility by allowing patients and doctors to use different wallets.<br><br>
 The scientific novelty of the paper is that a new approach to patient-physician interaction through the use of different wallets is proposed.</p>
-    <h4 align="center">It's work continue previoues work</h4>
-    <p align="justify">Only front-end and smart contract ETH and used IPFS: https://github.com/StrongerProgrammer7/SmartContractPatients</p>
-    <p align="justify">Front-end + Back-end. <br/> Used MySql for store big data and contract only access to record patient: https://github.com/StrongerProgrammer7/SmartContractPatients</p>
+    <h4 align="center">It's work continue previous works</h4>
+    <p align="justify">Only front-end and smart contract ETH and used IPFS:<br/> https://github.com/StrongerProgrammer7/SmartContractPatients</p>
+    <p align="justify">Front-end + Back-end. Used MySql for store big data and contract ETH only for access to record patient:<br/> https://github.com/StrongerProgrammer7/SmartContractPatients</p>
  <h4> How it work </h4>
  <p>
   In our work, the database server will be used as a bridge to ensure cross-chain interaction between different blockchains. The database stores records of patients, doctors, as well as their wallet addresses and smart contract addresses. <br/>
@@ -45,7 +44,7 @@ The scientific novelty of the paper is that a new approach to patient-physician 
 </div>
 <div>
  <h3 align="center"> View prototype </h3>
- <p>The interface has not changed based on previous work. Except that the ability to use the TONE wallet and switch between wallets has been added.</p>
+ <p>The interface has not changed based on previous work. Except that the ability to use the TON wallet and switch between wallets has been added.</p>
  <p> Choose wallet</p>
  <img src="https://github.com/StrongerProgrammer7/bridge_ton_eth_through_db/assets/71569051/3bdf48c6-f742-4948-9b73-ca5d861d0857" />
  <p> Cost Eth</p>
@@ -63,5 +62,6 @@ The scientific novelty of the paper is that a new approach to patient-physician 
 4) considering the possibility of integration with other blockchain platforms besides Eth and Ton to expand the capabilities and flexibility of the application, <br/>
 5) Ecosystem expansion: Involving partners in the development and expansion of the ecosystem, including medical institutions, insurance companies, pharmaceutical companies and other healthcare participants,<br/>
 6) providing users with the opportunity to have contracts of both blockchain networks. <br/>
+7) adaptive front-end for smartphone
 </div>
 <h4> Author: Abdyukov Z.M. </h4>
