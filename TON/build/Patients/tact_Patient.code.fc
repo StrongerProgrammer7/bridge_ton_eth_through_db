@@ -1,0 +1,184 @@
+#pragma version =0.4.3;
+#pragma allow-post-modification;
+#pragma compute-asm-ltr;
+
+#include "tact_Patient.headers.fc";
+#include "tact_Patient.stdlib.fc";
+#include "tact_Patient.storage.fc";
+
+;;
+;; Contract Patient functions
+;;
+
+(slice, slice, int, int, cell) $Patient$_contract_init(slice $parent, slice $owner) impure inline_ref {
+    var (($self'parent, $self'owner, $self'id, $self'counter, $self'docs)) = (null(), null(), null(), null(), null());
+    $self'parent = $parent;
+    $self'owner = $owner;
+    $self'counter = 0;
+    $self'id = 0;
+    return ($self'parent, $self'owner, $self'id, $self'counter, $self'docs);
+}
+
+((slice, slice, int, int, cell), int) $Patient$_fun_counter((slice, slice, int, int, cell) $self) impure inline_ref {
+    var (($self'parent, $self'owner, $self'id, $self'counter, $self'docs)) = $self;
+    return (($self'parent, $self'owner, $self'id, $self'counter, $self'docs), $self'counter);
+}
+
+((slice, slice, int, int, cell), cell) $Patient$_fun_allDocs((slice, slice, int, int, cell) $self) impure inline_ref {
+    var (($self'parent, $self'owner, $self'id, $self'counter, $self'docs)) = $self;
+    return (($self'parent, $self'owner, $self'id, $self'counter, $self'docs), $self'docs);
+}
+
+;;
+;; Receivers of a Contract Patient
+;;
+
+(((slice, slice, int, int, cell)), ()) $Patient$_internal_binary_Registration((slice, slice, int, int, cell) $self, (int) $msg) impure inline {
+    var ($self'parent, $self'owner, $self'id, $self'counter, $self'docs) = $self;
+    var ($msg'id) = $msg;
+    throw_unless(54404, ( __tact_slice_eq_bits($self'parent, __tact_context_get_sender()) ));
+    $self'id = $msg'id;
+    return (($self'parent, $self'owner, $self'id, $self'counter, $self'docs), ());
+}
+
+(((slice, slice, int, int, cell)), ()) $Patient$_internal_binary_Push((slice, slice, int, int, cell) $self, (slice) $msg) impure inline {
+    var ($self'parent, $self'owner, $self'id, $self'counter, $self'docs) = $self;
+    var ($msg'address) = $msg;
+    throw_unless(36880, ( __tact_slice_eq_bits($self'owner, __tact_context_get_sender()) ));
+    $self'docs~__tact_dict_set_int_cell(257, $self'counter, $DocsAddress$_store_cell($DocsAddress$_constructor_docs_address($msg'address)));
+    $self'counter = ($self'counter + 1);
+    return (($self'parent, $self'owner, $self'id, $self'counter, $self'docs), ());
+}
+
+(((slice, slice, int, int, cell)), ()) $Patient$_internal_binary_Remove((slice, slice, int, int, cell) $self, (slice) $msg) impure inline {
+    var ($self'parent, $self'owner, $self'id, $self'counter, $self'docs) = $self;
+    var ($msg'address) = $msg;
+    throw_unless(36880, ( __tact_slice_eq_bits($self'owner, __tact_context_get_sender()) ));
+    int $key = 0;
+    int $newCount = 0;
+    cell $newMap = null();
+    while (($key < $self'counter)) {
+        if ((~ null?($DocsAddress$_load_opt(__tact_dict_get_int_cell($self'docs, 257, $key))))) {
+            var ($temp'docs_address) = $DocsAddress$_not_null($DocsAddress$_load_opt(__tact_dict_get_int_cell($self'docs, 257, $key)));
+            if ((string_hash($msg'address) != string_hash($temp'docs_address))) {
+                $newMap~__tact_dict_set_int_cell(257, $newCount, $DocsAddress$_store_cell($DocsAddress$_constructor_docs_address($temp'docs_address)));
+                $newCount = ($newCount + 1);
+            }
+        }
+        $key = ($key + 1);
+    }
+    $self'counter = $newCount;
+    $self'docs = $newMap;
+    return (($self'parent, $self'owner, $self'id, $self'counter, $self'docs), ());
+}
+
+(((slice, slice, int, int, cell)), ()) $Patient$_internal_binary_Deploy((slice, slice, int, int, cell) $self, (int) $deploy) impure inline {
+    var ($self'parent, $self'owner, $self'id, $self'counter, $self'docs) = $self;
+    var ($deploy'queryId) = $deploy;
+    ($self'parent, $self'owner, $self'id, $self'counter, $self'docs)~$Patient$_fun_notify($DeployOk$_store_cell($DeployOk$_constructor_queryId($deploy'queryId)));
+    return (($self'parent, $self'owner, $self'id, $self'counter, $self'docs), ());
+}
+
+;;
+;; Get methods of a Contract Patient
+;;
+
+_ %counter() method_id(104984) {
+    var self = $Patient$_contract_load();
+    var res = self~$Patient$_fun_counter();
+    return res;
+}
+
+_ %allDocs() method_id(118477) {
+    var self = $Patient$_contract_load();
+    var res = self~$Patient$_fun_allDocs();
+    return res;
+}
+
+_ supported_interfaces() method_id {
+    return (
+        "org.ton.introspection.v0"H >> 128,
+        "org.ton.abi.ipfs.v0"H >> 128,
+        "org.ton.deploy.lazy.v0"H >> 128,
+        "org.ton.chain.workchain.v0"H >> 128
+    );
+}
+
+_ get_abi_ipfs() method_id {
+    return "ipfs://QmUdAtVn3usih7rHs8PSuWRpSBssfhUjdoiAH3e317f9jc";
+}
+
+_ lazy_deployment_completed() method_id {
+    return get_data().begin_parse().load_int(1);
+}
+
+;;
+;; Routing of a Contract Patient
+;;
+
+((slice, slice, int, int, cell), int) $Patient$_contract_router_internal((slice, slice, int, int, cell) self, int msg_bounced, slice in_msg) impure inline_ref {
+    ;; Handle bounced messages
+    if (msg_bounced) {
+        return (self, true);
+    }
+    
+    ;; Parse incoming message
+    int op = 0;
+    if (slice_bits(in_msg) >= 32) {
+        op = in_msg.preload_uint(32);
+    }
+    
+    
+    ;; Receive Registration message
+    if (op == 320965295) {
+        var msg = in_msg~$Registration$_load();
+        self~$Patient$_internal_binary_Registration(msg);
+        return (self, true);
+    }
+    
+    ;; Receive Push message
+    if (op == 3318127504) {
+        var msg = in_msg~$Push$_load();
+        self~$Patient$_internal_binary_Push(msg);
+        return (self, true);
+    }
+    
+    ;; Receive Remove message
+    if (op == 2460672840) {
+        var msg = in_msg~$Remove$_load();
+        self~$Patient$_internal_binary_Remove(msg);
+        return (self, true);
+    }
+    
+    ;; Receive Deploy message
+    if (op == 2490013878) {
+        var msg = in_msg~$Deploy$_load();
+        self~$Patient$_internal_binary_Deploy(msg);
+        return (self, true);
+    }
+    
+    return (self, false);
+}
+
+() recv_internal(int msg_value, cell in_msg_cell, slice in_msg) impure {
+    
+    ;; Context
+    var cs = in_msg_cell.begin_parse();
+    var msg_flags = cs~load_uint(4);
+    var msg_bounced = -(msg_flags & 1);
+    slice msg_sender_addr = __tact_verify_address(cs~load_msg_addr());
+    __tact_context = (msg_bounced, msg_sender_addr, msg_value, cs);
+    __tact_context_sender = msg_sender_addr;
+    
+    ;; Load contract data
+    var self = $Patient$_contract_load();
+    
+    ;; Handle operation
+    int handled = self~$Patient$_contract_router_internal(msg_bounced, in_msg);
+    
+    ;; Throw if not handled
+    throw_unless(130, handled);
+    
+    ;; Persist state
+    $Patient$_contract_store(self);
+}

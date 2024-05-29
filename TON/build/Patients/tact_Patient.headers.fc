@@ -1,0 +1,118 @@
+;;
+;; Header files for Patient
+;; NOTE: declarations are sorted for optimal order
+;;
+
+;; __tact_verify_address
+slice __tact_verify_address(slice address) inline;
+
+;; __tact_load_address
+(slice, slice) __tact_load_address(slice cs) inline;
+
+;; __tact_store_address
+builder __tact_store_address(builder b, slice address) inline;
+
+;; __tact_my_balance
+int __tact_my_balance() inline;
+
+;; __tact_not_null
+forall X -> X __tact_not_null(X x) inline;
+
+;; __tact_context_get
+(int, slice, int, slice) __tact_context_get() inline;
+
+;; __tact_context_get_sender
+slice __tact_context_get_sender() inline;
+
+;; __tact_store_bool
+builder __tact_store_bool(builder b, int v) inline;
+
+;; __tact_dict_set_int_cell
+(cell, ()) __tact_dict_set_int_cell(cell d, int kl, int k, cell v) inline;
+
+;; __tact_dict_get_int_cell
+cell __tact_dict_get_int_cell(cell d, int kl, int k) inline;
+
+;; __tact_slice_eq_bits
+int __tact_slice_eq_bits(slice a, slice b) inline;
+
+;; $Deploy$_load
+(slice, ((int))) $Deploy$_load(slice sc_0) inline;
+
+;; $DeployOk$_store
+builder $DeployOk$_store(builder build_0, (int) v) inline;
+
+;; $DeployOk$_store_cell
+cell $DeployOk$_store_cell((int) v) inline;
+
+;; $Registration$_load
+(slice, ((int))) $Registration$_load(slice sc_0) inline;
+
+;; $DocsAddress$_store
+builder $DocsAddress$_store(builder build_0, (slice) v) inline;
+
+;; $DocsAddress$_store_cell
+cell $DocsAddress$_store_cell((slice) v) inline;
+
+;; $DocsAddress$_load
+(slice, ((slice))) $DocsAddress$_load(slice sc_0) inline;
+
+;; $DocsAddress$_as_optional
+tuple $DocsAddress$_as_optional((slice) v) inline;
+
+;; $DocsAddress$_load_opt
+tuple $DocsAddress$_load_opt(cell cl) inline;
+
+;; $Push$_load
+(slice, ((slice))) $Push$_load(slice sc_0) inline;
+
+;; $Remove$_load
+(slice, ((slice))) $Remove$_load(slice sc_0) inline;
+
+;; $Patient$_store
+builder $Patient$_store(builder build_0, (slice, slice, int, int, cell) v) inline;
+
+;; $Patient$_load
+(slice, ((slice, slice, int, int, cell))) $Patient$_load(slice sc_0) inline;
+
+;; $StateInit$_not_null
+((cell, cell)) $StateInit$_not_null(tuple v) inline;
+
+;; $DocsAddress$_not_null
+((slice)) $DocsAddress$_not_null(tuple v) inline;
+
+;; $Patient$init$_load
+(slice, ((slice, slice))) $Patient$init$_load(slice sc_0) inline;
+
+;; $Patient$_contract_init
+(slice, slice, int, int, cell) $Patient$_contract_init(slice $parent, slice $owner) impure inline_ref;
+
+;; $Patient$_contract_load
+(slice, slice, int, int, cell) $Patient$_contract_load() impure inline_ref;
+
+;; $Patient$_contract_store
+() $Patient$_contract_store((slice, slice, int, int, cell) v) impure inline;
+
+;; $global_send
+() $global_send((int, slice, int, int, cell, cell, cell) $params) impure inline_ref;
+
+;; $Patient$_fun_counter
+((slice, slice, int, int, cell), int) $Patient$_fun_counter((slice, slice, int, int, cell) $self) impure inline_ref;
+
+;; $Patient$_fun_allDocs
+((slice, slice, int, int, cell), cell) $Patient$_fun_allDocs((slice, slice, int, int, cell) $self) impure inline_ref;
+
+;; $SendParameters$_constructor_bounce_to_value_mode_body_code_data
+((int, slice, int, int, cell, cell, cell)) $SendParameters$_constructor_bounce_to_value_mode_body_code_data(int bounce, slice to, int value, int mode, cell body, cell code, cell data) inline;
+
+;; $Patient$_fun_forward
+((slice, slice, int, int, cell), ()) $Patient$_fun_forward((slice, slice, int, int, cell) $self, slice $to, cell $body, int $bounce, tuple $init) impure inline_ref;
+
+;; $Patient$_fun_notify
+((slice, slice, int, int, cell), ()) $Patient$_fun_notify((slice, slice, int, int, cell) $self, cell $body) impure inline;
+
+;; $DocsAddress$_constructor_docs_address
+((slice)) $DocsAddress$_constructor_docs_address(slice docs_address) inline;
+
+;; $DeployOk$_constructor_queryId
+((int)) $DeployOk$_constructor_queryId(int queryId) inline;
