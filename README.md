@@ -4,7 +4,7 @@
 [Brief introduction](https://github.com/StrongerProgrammer7/bridge_ton_eth_through_db?tab=readme-ov-file#-brief-introduction-)<br>
 [Development tools](https://github.com/StrongerProgrammer7/bridge_ton_eth_through_db?tab=readme-ov-file#development-tools-and-programming-language)<br>
 [Architecture](https://github.com/StrongerProgrammer7/bridge_ton_eth_through_db?tab=readme-ov-file#architecture)<br>
-[View Prototype](https://github.com/StrongerProgrammer7/bridge_ton_eth_through_db?tab=readme-ov-file#-view-prototype-)
+[View Prototype](https://github.com/StrongerProgrammer7/bridge_ton_eth_through_db?tab=readme-ov-file#-view-prototype-) <br>
 [TODO](https://github.com/StrongerProgrammer7/bridge_ton_eth_through_db?tab=readme-ov-file#-todo-)
 
 <div align="center">
