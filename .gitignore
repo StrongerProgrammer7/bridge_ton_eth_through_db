@@ -2,6 +2,3 @@ node_modules
 server/public/*
 ContractOpenZepplin.zip
 .vscode
-
-server/contract/*.json
-server/contract/*.json
