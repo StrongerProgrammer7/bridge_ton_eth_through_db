@@ -1,6 +1,5 @@
 import { getDataFetch } from "../../../../http/getDataAPI";
 import { UserControls } from "../../../../models/user";
-import { PROFILEDOCTOR_ROUTER, PROFILE_ROUTE } from "../../../../utils/consts";
 import { setLocalStorageItem } from "../../../../utils/helper";
 
 
@@ -30,10 +29,6 @@ export async function signIn(data, dispatch)
                 return;
 
             console.log("Success sign in: ", message);
-            timeId = setTimeout(() =>
-            {
-                data.isDoctor === false ? window.open(PROFILE_ROUTE, '_self') : window.open(PROFILEDOCTOR_ROUTER, '_self');
-            }, 1000);
             dispatch(UserControls.setAuth(true));
             setLocalStorageItem("isAuth", "true");
         })

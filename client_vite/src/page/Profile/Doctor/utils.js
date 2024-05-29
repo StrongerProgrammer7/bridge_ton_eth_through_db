@@ -1,3 +1,7 @@
+import { Address } from "@ton/core";
+import { NameWallet } from "../../../store/enums/WorkWithWallet";
+import { Patient } from "../../../utils/contractTon/wrappers/Patient";
+
 import { isExistsData, isDoctorHaveAccess, createButton, getReadyDate } from "../total_utlls";
 
 export function createButtonForAccess(list_doctors_have_access, id)
@@ -41,31 +45,61 @@ export function addActionForListIlls(data, id_doctor)
     return data;
 }
 
-export async function isAccess(meta_patient, user)
+export async function isAccess(meta_patient, user, contractEth)
 {
 
-    if (!user.contract || user.accountWallet === '' || !meta_patient) return false;
-    return await user.contract.methods.checkAccess(meta_patient, user.accountWallet)
-        .call({ from: user.accountWallet })
-        .then(isAccess =>
-        {
-            return isAccess;
-        })
-        .catch((error) =>
-        {
-            console.error(error);
-            if (error.message)
-                console.log(error.message);
-            if (error.data.message)
-                console.log(error.data.message);
-            else
+    if (!user.accountWallet || !meta_patient) return false;
+
+    if (user.nameWallet === NameWallet.ETH)
+    {
+        return await user.contract.methods.checkAccess(meta_patient, user.accountWallet)
+            .call({ from: user.accountWallet })
+            .then(isAccess =>
             {
-                let start = error.message.indexOf("message");
-                console.log(error.message.slice(start - 1, error.message.indexOf("\",", start)));
-            }
+                return isAccess;
+            })
+            .catch((error) =>
+            {
+                console.error(error);
+                if (error.message)
+                    console.log(error.message);
+                if (error.data.message)
+                    console.log(error.data.message);
+                else
+                {
+                    let start = error.message.indexOf("message");
+                    console.log(error.message.slice(start - 1, error.message.indexOf("\",", start)));
+                }
 
 
-        });
+            });
+    } else
+    {
+        return await contractEth.methods.checkAccess(meta_patient, user.accountWallet)
+            .call({ from: meta_patient })
+            .then(isAccess =>
+            {
+                return isAccess;
+            })
+            .catch((error) =>
+            {
+                console.error(error);
+                if (error.message)
+                    console.log(error.message);
+                if (error.data.message)
+                    console.log(error.data.message);
+                else
+                {
+                    let start = error.message.indexOf("message");
+                    console.log(error.message.slice(start - 1, error.message.indexOf("\",", start)));
+                }
+
+
+            });
+    }
+
+
+
 
 }
 
@@ -100,7 +134,9 @@ export function addRow(data, user, dt_ills, setNewDataAboutPatient)
             'action': data.action,
             'id': data.id,
             'id_patient': data.id_patient,
-            'meta': data.meta
+            'meta': data.meta,
+            'name_wallet': data.name_wallet,
+            'account_contract': data.account_contract,
         }
     ).draw();
     setNewDataAboutPatient(undefined);
@@ -128,16 +164,44 @@ export function changeRow(result, dt_ills, setNewDataAboutPatient)
     setNewDataAboutPatient(undefined);
 }
 
-export function isExistsAcessShowModal(idtime, meta, user, handleShow)
+export async function isExistsAccess(data, user, client, contractEth)
 {
-    isAccess(meta, user)
-        .then(access => 
-        {
-            //console.log(access);
-            if (access)
-                idtime = setTimeout(() =>
-                {
-                    handleShow();
-                }, 200);
-        })
+    let result;
+
+    if (data.name_wallet === NameWallet.ETH)
+        result = await isExistsAccessETH(data.meta, user, contractEth);
+    else
+        result = await isExistsAccessTON(data.account_contract, client, user.accountWallet);
+
+    return result;
+
+}
+
+async function isExistsAccessETH(meta, user, contractEth)
+{
+    return await isAccess(meta, user, contractEth);
+    // .then(access => 
+    // {
+    //     //console.log(access);
+    //     if (access)
+    //         idtime = setTimeout(() =>
+    //         {
+    //             handleShow();
+    //         }, 200);
+    // })
+}
+
+export async function isExistsAccessTON(address_contract, client, wallet)
+{
+    const contract = Patient.fromAddress(Address.parse(address_contract));
+    const opened_contract = client.open(contract);
+    const list_docs = (await opened_contract.getAllDocs()).values();
+
+    for (let i = 0; i < list_docs.length; i++)
+    {
+        const doc = list_docs[i].docs_address;
+        if (wallet === doc)
+            return true;
+    }
+    return false;
 }

@@ -1,7 +1,9 @@
 // @ts-nocheck
 import { registration } from "../../http/userAPI";
-import Web3 from 'web3';
+import { Address } from "@ton/core";
 import { checkRegistrationControls } from "../../models/checkIsRegistered";
+import { MessageForTON, NameWallet } from "../../store/enums/WorkWithWallet";
+import { waitingTransaction } from "../../utils/helper";
 export function optionCities(element)
 {
     return `${ element.region }:${ element.city }`
@@ -104,52 +106,85 @@ function convertDateFormat(inputDate)
     }
 
 }
-export async function registrationContractAndInDatabase(data, user, dispatch)
+export async function registrationContractEthAndInDatabase(data, user, dispatch)
 {
-    if (user.contract)
+    if (!user.contract)
+        return;
+
+    return await user.contract.methods.createPatient().send({ from: data.meta }, (error, result) =>
     {
-        return await user.contract.methods.createPatient().send({ from: data.meta }, (error, result) =>
+        if (error)
+            return console.error(error);
+        console.log('txHash:', result);
+    })
+        .then(async (receipt) =>
         {
-            if (error)
-                return console.error(error);
-            console.log('txHash:', result);
+            dispatch(checkRegistrationControls.setRegisteredContract(true));
+            console.log(receipt);
+            return await user.contract.getPastEvents("NewPatient",
+                {
+                    fromBlock: 0,
+                    toBlock: 'latest'
+                }).then(async (events) => 
+                {
+
+                    console.log('Contract ', events[0].returnValues[3]);
+                    data["account_contract"] = events[0].returnValues[3];
+                    data.bdate = convertDateFormat(data.bdate);
+                    data["name_wallet"] = NameWallet.ETH;
+                    const response = await registration(data);
+                    if (response && response.status && response.status >= 200 && response.status < 300)
+                        dispatch(checkRegistrationControls.setRegisteredDB(true));//registration_data.setIsRegisteredDB(true);
+                    return response;
+                })
+                .catch((err) => 
+                {
+
+                    console.error(err);
+                    return { status: 501, data: { message: "Problem with get data from contract, but contract created!" } };
+                });
+
         })
-            .then(async (receipt) =>
-            {
-                dispatch(checkRegistrationControls.setRegisteredContract(true));
-                //registration_data.setIsRegisteredContract(true);
-                console.log(receipt);
-                return await user.contract.getPastEvents("NewPatient",
-                    {
-                        fromBlock: 0,
-                        toBlock: 'latest'
-                    }).then(async (events) => 
-                    {
+        .catch((err) =>
+        {
+            console.log("Denied");
+            console.error(err);
+            return { status: 4001, data: { message: err.message } };
+        });
+}
 
-                        console.log('Contract ', events[0].returnValues[3]);
-                        data["account_contract"] = events[0].returnValues[3];
-                        data.bdate = convertDateFormat(data.bdate);
-                        data["name_wallet"] = "ETH";
-                        const response = await registration(data);
-                        if (response && response.status && response.status >= 200 && response.status < 300)
-                            dispatch(checkRegistrationControls.setRegisteredDB(true));//registration_data.setIsRegisteredDB(true);
-                        return response;
-                    })
-                    .catch((err) => 
-                    {
 
-                        console.error(err);
-                        return { status: 501, data: { message: "Problem with get data from contract, but contract created!" } };
-                    });
 
-            })
-            .catch((err) =>
-            {
-                console.log("Denied");
-                console.error(err);
-                return { status: 4001, data: { message: err.message } };
-            })
+export async function registrationContractTonAndinDatabase(data, user, dispatch, sender, client, mnemonic)
+{
+    if (!user.contract || !user.accountWallet || !sender || !client)
+        return;
+    const contract = user.contract;
+    const wallet = user.accountWallet;
 
-    }
+    const countPatients = await contract.getCountPatients();
+    console.log(countPatients);
+    if (!countPatients)
+        return;
+
+    const msg =
+    {
+        $$type: MessageForTON.REGISTRAION,
+        id: BigInt(Number(countPatients) + 1)
+    };
+
+    const result_registration_contract = await waitingTransaction(contract, msg, "0.5", sender, client, mnemonic);
+    if (!result_registration_contract)
+        return;
+    dispatch(checkRegistrationControls.setRegisteredContract(true));
+    const address_contract_of_patient = (await contract.getContractPatient(Address.parse(wallet))).toString();
+    console.log(address_contract_of_patient);
+    data["account_contract"] = address_contract_of_patient;
+    data.bdate = convertDateFormat(data.bdate);
+    data["name_wallet"] = NameWallet.TON;
+    const response = await registration(data);
+    if (response && response.status && response.status >= 200 && response.status < 300)
+        dispatch(checkRegistrationControls.setRegisteredDB(true));
+    return response;
 
 }

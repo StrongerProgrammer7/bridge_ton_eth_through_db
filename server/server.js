@@ -52,8 +52,8 @@ app.use(errorHandler)
 
 const optionHTTPS =
 {
-    key: fs.readFileSync('certificates/key.pem'),
-    cert: fs.readFileSync('certificates/cert.pem')
+    key: fs.readFileSync('certificates/certificate_localhost/cert-key.pem'),
+    cert: fs.readFileSync('certificates/certificate_localhost/cert.pem')
 }
 
 

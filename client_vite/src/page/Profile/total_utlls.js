@@ -4,12 +4,17 @@ export function createButton(class_text, id, text)
   return `<button class='${ class_text }' id='${ id }'>${ text }</button>`;
 }
 
+/**
+ * @param {{ responsive: { recalc: () => void; }; columns: { adjust: () => { (): any; new (): any; responsive: { (): any; new (): any; recalc: { (): void; new (): any; }; }; }; }; }} dt
+ * @param {number | undefined} ms
+ */
 export function recalcTable(dt, ms)
 {
   setTimeout(() =>
   {
-    dt.responsive.recalc();
-    dt.columns.adjust().responsive.recalc();
+    console.log("Recal datatable...");
+    dt.responsive?.recalc();
+    dt.columns?.adjust().responsive.recalc();
   }, ms)
 }
 
@@ -89,21 +94,25 @@ export function openTab(isOpenCurrentTab, getListDataCallback, dataTable, user, 
 {
   if (isOpenCurrentTab === false)
   {
-    console.log(dataTable);
-    let result;
-    if (dispatch)
-      result = getListDataCallback(dataTable.dtRef, user, dispatch);
-    else
-      result = getListDataCallback(dataTable.dtRef, user);
-
-    setDatatablesValues(result, dataTable.setDT);
-    dataTable.setOpenTab(true);
-  } else
-  {
     if (dataTable.dt)
     {
       recalcTable(dataTable.dt, 200);
     } else
-      dataTable.setOpenTab(false); //TODO: Add button for get new data from server
+    {
+      console.log(dataTable);
+      let result;
+      if (dispatch)
+        result = getListDataCallback(dataTable.dtRef, user, dispatch);
+      else
+        result = getListDataCallback(dataTable.dtRef, user);
+
+      setDatatablesValues(result, dataTable.setDT);
+      dataTable.setOpenTab(true);
+    }
+
+
+  } else
+  {
+    dataTable.setOpenTab(false);
   }
 }

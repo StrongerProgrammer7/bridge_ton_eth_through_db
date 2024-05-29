@@ -4,21 +4,21 @@ import { setWhoIs, pushList, removeElemFromList, addExtraDataPersonalInfo, clear
 
 const initialState =
 {
-    accountWallet: '',
+    accountWallet: null,
     personalInfo:
     {
         name: "",
         isDoctor: false,
         isPatient: false,
-        nameWallet: '',
-        id: undefined
+        nameWallet: null,
+        id: null
     },
-    contract: '',
+    contract: null,
     listDoctorsAccess: [],
+    web3Connect: null,
     isAuth: false,
     loading: true,
 }
-
 
 export function userReducer(state = initialState, action)
 {
@@ -30,10 +30,15 @@ export function userReducer(state = initialState, action)
             return { ...state, contract: action.payload };
         case ActionTypes.WHOIS:
             return { ...state, personalInfo: setWhoIs(state.personalInfo, action.payload) };
+        case ActionTypes.ISDOCTOR:
+            return { ...state, personalInfo: { ...state.personalInfo, isDoctor: action.payload } };
+        case ActionTypes.ISPATIENT:
+            return { ...state, personalInfo: { ...state.personalInfo, isPatient: action.payload } };
         case ActionTypes.EXTRA_DATA:
             return { ...state, personalInfo: addExtraDataPersonalInfo(state, action.payload.key, action.payload.data) };
         case ActionTypes.ADD_DOCTOR:
-            return { ...state, listDoctorsAccess: pushList(state.listDoctorsAccess, action.payload) };
+            state.listDoctorsAccess.push(action.payload);
+            return { ...state };
         case ActionTypes.REMOVE_DOCTOR:
             return { ...state, listDoctorsAccess: removeElemFromList(state.listDoctorsAccess, action.payload) };
         case ActionTypes.NEW_LIST_DOCTOR:
@@ -42,6 +47,8 @@ export function userReducer(state = initialState, action)
             return { ...state, isAuth: action.payload };
         case ActionTypes.NAME_WALLET:
             return { ...state, personalInfo: { ...state.personalInfo, nameWallet: action.payload } };
+        case ActionTypes.WEB3_CONNECT:
+            return { ...state, web3Connect: action.payload };
         case ActionTypes.LOADING:
             return { ...state, loading: action.payload };
         case ActionTypes.CLEAR_DATA:
@@ -66,6 +73,14 @@ export const UserControls =
         type: ActionTypes.WHOIS,
         payload: value
     }),
+    setPatient: (value) => ({
+        type: ActionTypes.ISPATIENT,
+        payload: value
+    }),
+    setDoctor: (value) => ({
+        type: ActionTypes.ISDOCTOR,
+        payload: value
+    }),
     addDoctor: (value) => ({
         type: ActionTypes.ADD_DOCTOR,
         payload: value,
@@ -84,6 +99,10 @@ export const UserControls =
     }),
     setAuth: (value) => ({
         type: ActionTypes.IS_AUTH,
+        payload: value
+    }),
+    setWeb3Connect: (value) => ({
+        type: ActionTypes.WEB3_CONNECT,
         payload: value
     }),
     setNameWallet: (value) => ({

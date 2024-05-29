@@ -13,7 +13,7 @@ const login = async (req, res, next) =>
             pass,
             isDoctor
         } = req.body;
-    console.log(req.body);
+
     if (meta === undefined || meta === '' || pass === undefined || pass === '')
     {
         return next(ApiError.badRequest('Error: Not correct input data'));
@@ -40,8 +40,10 @@ async function signIn(query_check, res, meta, pass, next)
         })
         .then(async (human) =>
         {
+            if (human.length === 0)
+                return next(ApiError.badRequest('Error: User don"t exists!'));
             let validPassword = await bcrypt.compare(pass, human[0].password);
-            if (human.length === 0 || !validPassword)
+            if (!validPassword)
             {
                 return next(ApiError.badRequest('Error: You are not registred or not correct password'));
             } else

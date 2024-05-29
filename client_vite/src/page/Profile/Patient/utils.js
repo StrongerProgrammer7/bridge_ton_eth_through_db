@@ -29,7 +29,6 @@ export function createButtonForAccess(list_doctors_have_access, id)
 export function addActionForListDoctors(data, list_doctors_have_access = '')
 {
     if (!data) return data;
-
     for (let i = 0; i < data.length; i++)
         data[i].action = createButtonForAccess(list_doctors_have_access, data[i].id);
 
@@ -65,12 +64,15 @@ export function changeButton(button, deleteClass, addClass, newId, textContent)
 
 export async function getTableActualIll(tableActualIllsRef, user)
 {
-    if (user.accountWallet === '') return;
+    if (!user.accountWallet) return;
     const data_ills = await getListActualIllsPatients(user.accountWallet);
-    const ills = addActionForListIlls(data_ills.data.data);
+    let ills = [];
+    if (data_ills.data.data)
+        ills = addActionForListIlls(data_ills.data.data);
+
     const dt_actualIlls = new DataTables(tableActualIllsRef.current,
         {
-            responsive: true,
+            // responsive: true,
             data: ills,
             columns: [
                 { data: "num" },
@@ -174,13 +176,14 @@ export async function getTableAllDoctors(tableDoctorRef, user, dispatch)
     if (user.accountWallet === '') return undefined;
 
     const results = await getListAllDoctors(user.accountWallet);
-    //console.log(results);
+
     const city = results[0].data.data;
     const data = results[1].data.data;
-    const list_doc_have_access = results[2].data.data[0].list_doc;
+    const list_doc_have_access = results[2].data.data[0].list_doc ?? '';
+
     const doctors = addActionForListDoctors(data, list_doc_have_access);
 
-    dispatch(UserControls.setNewListDoctor(list_doc_have_access.split(",")));
+    dispatch(UserControls.setNewListDoctor(list_doc_have_access.length === 0 ? [] : list_doc_have_access.split(",")));
     return new DataTables(tableDoctorRef.current,//$(tableRef.current).DataTable(
         {
             responsive: true,

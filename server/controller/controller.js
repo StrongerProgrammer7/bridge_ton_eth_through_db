@@ -26,38 +26,40 @@ const get_all_name_ills = require('../model/queryDB/GET/get_all_name_ills');
 const set_diagnosis = require('../model/queryDB/POST/set_diagnosis');
 const update_diagnosis = require('../model/queryDB/POST/update_diagnosis');
 const getABIandAddress = require('../model/getABIandAddress');
+const getTonContractAddress = require('../model/getTonContractAddress');
 /*-----------------------------------*/
 
-router.post("/register",register);
-router.post("/login",[
-    check('meta',"Account shouldn`t empty!").notEmpty(),
-    check('pass',"Password should be length 6 or more and less 255").isLength({min:6,max:255})
-],login);
+router.post("/register", register);
+router.post("/login", [
+    check('meta', "Account shouldn`t empty!").notEmpty(),
+    check('pass', "Password should be length 6 or more and less 255").isLength({ min: 6, max: 255 })
+], login);
 //-------DB
 /*----------------POST------------------------*/
-router.post("/get_all_info_about_doctor",get_all_details_info_about_doctor);
-router.post("/isExistsPatient_Doctor",isExistsPatient_Doctor);
-router.post("/get_all_ill_s_patient",get_all_ill_s_Patient);
-router.post('/get_list_doctors_haveAccess',get_list_doctors_haveAccess);
-router.post('/update_list_doctors',update_list_doctors);
-router.post('/getCity',getCity);
-router.post('/get_all_personalInfo_patient',get_all_personalInfo_patient);
-router.post('/get_all_personalInfo_doctor',get_all_personalInfo_doctor);
-router.post('/update_pesonalInfo_patient',update_pesonalInfo_patient);
-router.post('/set_diagnosis',set_diagnosis);
-router.post('/update_diagnosis',update_diagnosis);
-router.post('/get_all_actuaIllPatient',get_all_actuaIllPatient);
+router.post("/get_all_info_about_doctor", get_all_details_info_about_doctor);
+router.post("/isExistsPatient_Doctor", isExistsPatient_Doctor);
+router.post("/get_all_ill_s_patient", get_all_ill_s_Patient);
+router.post('/get_list_doctors_haveAccess', get_list_doctors_haveAccess);
+router.post('/update_list_doctors', update_list_doctors);
+router.post('/getCity', getCity);
+router.post('/get_all_personalInfo_patient', get_all_personalInfo_patient);
+router.post('/get_all_personalInfo_doctor', get_all_personalInfo_doctor);
+router.post('/update_pesonalInfo_patient', update_pesonalInfo_patient);
+router.post('/set_diagnosis', set_diagnosis);
+router.post('/update_diagnosis', update_diagnosis);
+router.post('/get_all_actuaIllPatient', get_all_actuaIllPatient);
 
 /*----------------GET------------------------*/
-router.get("/get_cities",get_all_cities);
-router.get("/get_all_patients",get_all_patients);
-router.get("/get_all_doctors",get_all_doctors);
-router.get("/get_contacts_doctors",get_contacts_doctors);
-router.get("/get_hospitals",get_hospitals);
-router.get("/get_all_profession_doctors",get_all_profession_doctors);
-router.get("/get_all_categories_doctors",get_all_categories_doctors);
-router.get("/get_all_classificationIlls",get_all_classificationIlls);
-router.get("/get_all_name_ills",get_all_name_ills);
-router.get('/getABIandAddress',getABIandAddress);
+router.get("/get_cities", get_all_cities);
+router.get("/get_all_patients", get_all_patients);
+router.get("/get_all_doctors", get_all_doctors);
+router.get("/get_contacts_doctors", get_contacts_doctors);
+router.get("/get_hospitals", get_hospitals);
+router.get("/get_all_profession_doctors", get_all_profession_doctors);
+router.get("/get_all_categories_doctors", get_all_categories_doctors);
+router.get("/get_all_classificationIlls", get_all_classificationIlls);
+router.get("/get_all_name_ills", get_all_name_ills);
+router.get('/getABIandAddress', getABIandAddress);
+router.get('/getContractAddressTon', getTonContractAddress);
 
 module.exports = router;

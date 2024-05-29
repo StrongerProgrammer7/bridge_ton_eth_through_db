@@ -1,0 +1,40 @@
+.connect_wallet
+{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 18px;
+}
+.connect_metamask
+{
+    display: flex;
+    align-items: center;
+    padding: 5px;
+    gap: 5px;
+    background: #e38f45cf;
+    border-radius: 15px;
+    max-width: 60%;
+    margin: 5px;
+    cursor: pointer;
+    transition: transform 0.2s ease;
+}
+.connect_metamask:hover
+{
+    transform: scale(1.05);
+}
+.connect_metamask img
+{
+    width: 33px;
+}
+
+.text_metamask
+{
+    margin-bottom: 0;
+    font-size: 18px;
+    color: white;
+}
+
+.zindex1
+{
+    z-index: 1 !important;
+}

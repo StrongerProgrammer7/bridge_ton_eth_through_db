@@ -20,7 +20,7 @@ export const getListPatients = async (tablePatientRef, user) =>
     if (!user.accountWallet) return undefined;
 
     let data = await getListData("api/get_all_patients");
-
+    console.log(data);
     const patients = addActionForListPatients(data, user.personalInfo.id);
     //console.log(patients);
     return new DataTables(tablePatientRef.current,
@@ -35,7 +35,9 @@ export const getListPatients = async (tablePatientRef, user) =>
                 { data: 'action', responsivePriority: 1 },
                 { data: 'list_doc_have_access_to_patient' },
                 { data: 'id' },
-                { data: 'meta' }
+                { data: 'meta' },
+                { data: 'name_wallet' },
+                { data: 'account_contract' }
             ],
 
             searchPanes:
@@ -64,13 +66,8 @@ export const getListPatients = async (tablePatientRef, user) =>
             columnDefs: [
                 {
                     sClass: css.hide_columns,
-                    aTargets: [6, 7]
+                    aTargets: [6, 7, 9]
                 },
-                // {
-                //     target: -1,
-                //     visible: false,
-                //     searchable: true,
-                // },
                 {
                     searchPanes:
                     {
@@ -83,7 +80,7 @@ export const getListPatients = async (tablePatientRef, user) =>
                     {
                         show: false
                     },
-                    targets: [1, 2]
+                    targets: [1, 2, 8, 9]
                 },
                 {
                     searchPanes: {
@@ -108,47 +105,14 @@ export const getListPatients = async (tablePatientRef, user) =>
                     },
                     targets: [4]
                 },
-                // {
-                //     searchPanes: {
-                //         show:true,
-                //         options: [
-                //             {
-                //                 label: 'Имеется доступ',
-                //                 value: function(rowData, rowIdx) 
-                //                 {
-                //                     if(rowData.list_doc_have_access_to_patient !== null)
-                //                         {
-                //                             //console.log(rowData.list_doc_have_access_to_patient);
-                //                             return rowData.list_doc_have_access_to_patient.includes('61')
-                //                         }
-                //                     return;
-                //                 }
-                //             }
-
-                //         ]
-                //     },
-                //     targets: [5]
-                // }
 
             ],
 
-            // dom: 'Bfrtip',
-            // buttons: [
-            //     {
-            //         text: 'Profession',
-            //         className: 'btn btn-primary dropdown-toggle',
-            //         action: function ( e, dt, node, config ) 
-            //         {
-            //             //$('.dt-button').toggleClass('')
-            //         }
-            //     }
-            // ],
+            dom: `P<"${ css.wrapper }"lf>rtip`,
             scrollY: 300,
             scrollX: false,
             deferRender: true,
             scroller: true
-            // select: true,
-            //keys: true
         });
 }
 
@@ -157,7 +121,7 @@ export const getListIllsPatients = async (tableIllsRef, user) =>
     if (!user.accountWallet) return undefined;
 
     let data = await getListData("api/get_all_ill_s_patient", { meta: user.accountWallet, queryDoctor: user.personalInfo.isDoctor });
-
+    console.log(data);
     const ills = addActionForListIlls(data, user.personalInfo.id);
     return new DataTables(tableIllsRef.current,
         {
@@ -175,7 +139,9 @@ export const getListIllsPatients = async (tableIllsRef, user) =>
                 { data: 'action' },
                 { data: 'id' },
                 { data: 'id_patient' },
-                { data: 'meta' }
+                { data: 'meta' },
+                { data: 'name_wallet' },
+                { data: 'account_contract' }
             ],
 
             searchPanes:
@@ -190,11 +156,11 @@ export const getListIllsPatients = async (tableIllsRef, user) =>
                 initCollapsed: true,
                 layout: 'columns-3',
             },
-            dom: 'Plfrtip',
+            dom: `P<"${ css.wrapper }"lf>rtip`,
             columnDefs: [
                 {
                     sClass: css.hide_columns,
-                    aTargets: [9, 10, 11]
+                    aTargets: [9, 10, 11, 13]
                 },
                 {
                     searchPanes:
@@ -208,12 +174,11 @@ export const getListIllsPatients = async (tableIllsRef, user) =>
                     {
                         show: false
                     },
-                    targets: [0, 1, 2, 3, 5, 6, 8, 9, 10, 11]
+                    targets: [0, 1, 2, 3, 5, 6, 8, 9, 10, 11, 12, 13]
                 }
 
             ],
             scrollY: 300,
-            scrollX: 100,
             deferRender: true,
             scroller: true
         });

@@ -1,0 +1,29 @@
+ tc-root button:hover
+{
+   transform: scale(1.1) !important;
+} 
+
+.modal-backdrop
+{
+   z-index: 1 !important;
+}
+
+html,body
+{
+   height: 100%;
+}
+#root
+{
+   min-height: 100%;
+   display: flex;
+   flex-direction: column;
+}
+
+.wrapper_main
+{
+   flex: 1 1 auto;
+}
+
+a{
+   text-decoration: none;
+}
