@@ -17,7 +17,7 @@
 The scientific novelty of the paper is that a new approach to patient-physician interaction through the use of different wallets is proposed.</p>
     <h4 align="center">It's work continue previous works</h4>
     <p align="justify">Only front-end and smart contract ETH and used IPFS:<br/> https://github.com/StrongerProgrammer7/SmartContractPatients</p>
-    <p align="justify">Front-end + Back-end. Used MySql for store big data and contract ETH only for access to record patient:<br/> https://github.com/StrongerProgrammer7/SmartContractPatients</p>
+    <p align="justify">Front-end + Back-end. Used MySql for store big data and contract ETH only for access to record patient:<br/> https://github.com/StrongerProgrammer7/Interaction_with_patients</p>
  <h4> How it work </h4>
  <p>
   In our work, the database server will be used as a bridge to ensure cross-chain interaction between different blockchains. The database stores records of patients, doctors, as well as their wallet addresses and smart contract addresses. <br/>
